@@ -508,7 +508,7 @@ for(k in 1:nrow(LocationInformation)) {
               eval(parse(text = paste("Plot", "_", ModelType[l], "_", StartYear, "_", LocationInformation[k,1], " <- ",
                                       "as.data.frame(read.csv(", "'", LocationInformation[k,1], "_", ModelType[l], "_", StartYear, "'", ", header = TRUE", "))", sep = "")))
       
-              eval(parse(text = paste("names(", "Plot", "_", ModelType[l], "_", StartYear, "_", k, ")", " <- ", "c('Day', 'MRS')", sep = "")))
+              eval(parse(text = paste("names(", "Plot", "_", ModelType[l], "_", StartYear, "_", LocationInformation[k,1], ")", " <- ", "c('Day', 'MRS')", sep = "")))
               
           } else {}
       
