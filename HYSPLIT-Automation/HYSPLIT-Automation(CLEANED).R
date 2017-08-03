@@ -453,6 +453,7 @@ for(d in 1:nrow(LocationInformation)) {
                 DayModel1_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
                 DayModel2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
                 
+                # This section of code executes the MRS measure
                 for (g in 1:y_steps) {
                   
                     for(h in 1:x_steps) {
@@ -478,6 +479,8 @@ for(d in 1:nrow(LocationInformation)) {
                 
                 # Metric calculation is performed here (as a percentage %)
                 Metric[f] <- ((100*20000*(Resolution*111000)^2)/(2*(LocationInformation[d,2]/(c-1))))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
+                
+                # PAIGE'S THINGS GO HERE!
                 
             }
           
@@ -656,4 +659,6 @@ for(s in 1:length(ModelType)) {
 }
 
 print("disregard warnings above") 
-setwd("..")        
+setwd(paste("..")
+
+
