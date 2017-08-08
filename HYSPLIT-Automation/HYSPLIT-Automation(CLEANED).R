@@ -481,6 +481,7 @@ for(d in 1:nrow(LocationInformation)) {
                 # PAIGE'S THINGS GO HERE!
                 library(geosphere)
                 plant <- c(XXX, XXX) # Location Latitude, Longitude
+                plant2 <- plant
                 
                 # Model - 1  
                 lat <- DayModel1[,4]
