@@ -131,8 +131,8 @@ for (i in 1:400) {
   DayModel1 <- Dil_Dispersion
   DayModel2 <- Dispersion
   
-  x_range <- max( max(DayModel1$LON), max(DayModel2$LON)) - min(min(DayModel1$LON), min(DayModel2$LON)) + 1
-  y_range <- max( max(DayModel1$LAT), max(DayModel2$LAT)) - min(min(DayModel1$LAT), min(DayModel2$LAT)) + 1
+  x_range <- max(max(DayModel1$LON), max(DayModel2$LON)) - min(min(DayModel1$LON), min(DayModel2$LON)) + 1
+  y_range <- max(max(DayModel1$LAT), max(DayModel2$LAT)) - min(min(DayModel1$LAT), min(DayModel2$LAT)) + 1
   
   x_steps <- round(x_range/Resolution, 0)
   y_steps <- round(y_range/Resolution, 0)
