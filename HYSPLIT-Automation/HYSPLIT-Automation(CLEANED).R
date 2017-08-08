@@ -438,6 +438,7 @@ for(d in 1:nrow(LocationInformation)) {
             Model1$DA[Model1$DA == 0] <- (c-1)
             
             Metric = NULL
+            Metric2 <- data.frame()
             
             for(f in 1:(c-1) ) {
               
@@ -453,44 +454,74 @@ for(d in 1:nrow(LocationInformation)) {
                 DayModel1_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
                 DayModel2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
                 
-                # This section of code executes the MRS measure
+                
+                # The metric is calculated here
+                minLON <- min(min(DayModel1$LON), min(DayModel2$LON))
+                minLAT <- min(min(DayModel1$LAT), min(DayModel2$LAT))
+                
                 for (g in 1:y_steps) {
                   
                     for(h in 1:x_steps) {
-                      
-                        CellAveragedPollutant_1 <- mean(DayModel1[,5][DayModel1$LON >= min(DayModel1$LON) + Resolution*(h-1) &
-                                                             DayModel1$LON < min(DayModel1$LON) + Resolution*h &
-                                                             DayModel1$LAT >= min(DayModel1$LAT) + Resolution*(g-1) &
-                                                             DayModel1$LAT < min(DayModel1$LAT) + Resolution*g]
-                                                )
-                        
-                        CellAveragedPollutant_2 <- mean(DayModel2[,5][DayModel2$LON >= min(DayModel2$LON) + Resolution*(h-1) &
-                                                                 DayModel2$LON < min(DayModel2$LON) + Resolution*h &
-                                                                 DayModel2$LAT >= min(DayModel2$LAT) + Resolution*(g-1) &
-                                                                 DayModel2$LAT < min(DayModel2$LAT) + Resolution*g]
-                        )
-                        
+                    
+                        CellAveragedPollutant_1 <- mean(DayModel1[,7][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
+                                                                    DayModel1$LAT >= minLAT + Resolution*(g-1) & DayModel1$LAT < minLAT + Resolution*g])
+                    
+                        CellAveragedPollutant_2 <- mean(DayModel2[,7][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
+                                                                    DayModel2$LAT >= minLAT + Resolution*(g-1) & DayModel2$LAT < minLAT + Resolution*g])
+                    
                         DayModel1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
                         DayModel2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
-                        
+                    
                     }
-                  
                 }
                 
                 # Metric calculation is performed here (as a percentage %)
                 Metric[f] <- ((100*20000*(Resolution*111000)^2)/(2*(LocationInformation[d,2]/(c-1))))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
                 
                 # PAIGE'S THINGS GO HERE!
+                library(geosphere)
+                plant <- c(XXX, XXX) # Location Latitude, Longitude
                 
+                # Model - 1  
+                lat <- DayModel1[,4]
+                long <- DayModel1[,5]
+                conc <- DayModel1[,6]
+                emit <- cbind(long, lat, conc)
+                  
+                ex.angle <- bearing(plant, emit[,1:2])
+                mean.angle <- sum(ex.angle*emit)/sum(emit)
+                var.angle1 <- sqrt((sum(na.omit(emit)*(ex.angle - mean.angle)))^2)/sum(na.omit(emit))
+                print(var.angle1)
+          
+                # Model - 2        
+                lat2 <- DayModel2[,4]
+                long2 <- DayModel2[,5]
+                conc2 <- DayModel2[,6]
+                emit2 <- cbind(long, lat, conc)
+                  
+                ex.angle2 <- bearing(plant2, emit2[,1:2])
+                print(ex.angle2)
+                  
+                mean.angle2 <- sum(ex.angle2*emit2)/sum(emit2)
+                print(mean.angle2)
+                  
+                var.angle2 <- sqrt((sum(emit)*(sum(ex.angle - mean.angle)^2))/sum(emit))
+                print(var.angle2)
+                
+                ### Difference of E - A
+                mean.angleX <- mean.angle2 - mean.angle
+                var.angleX <- var.angle2 - var.angle1
+                
+                Metric2[XXX, XXX] <- (XXX, XXX, XXX)# Save metrics in a dataframe here
+                
+                }
             }
           
             # Write output file here
             write.csv(Metric, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, sep = ""))
             
-        } else {}
-      
-    }
-  
+    } else {}
+    
 }
 
 
