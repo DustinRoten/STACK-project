@@ -35,15 +35,19 @@ for (i in 0:10) {
   DayModel2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
   
   # This section of code executes the MRS measure
+  
+  minLON <- min(min(DayModel1$LON), min(DayModel2$LON))
+  minLAT <- min(min(DayModel1$LAT), min(DayModel2$LAT))
+  
   for (g in 1:y_steps) {
     
     for(h in 1:x_steps) {
       
-      CellAveragedPollutant_1 <- mean(DayModel1[,7][DayModel1$LON >= min(DayModel1$LON) + Resolution*(h-1) & DayModel1$LON < min(DayModel1$LON) + Resolution*h &
-                                                    DayModel1$LAT >= min(DayModel1$LAT) + Resolution*(g-1) & DayModel1$LAT < min(DayModel1$LAT) + Resolution*g])
+      CellAveragedPollutant_1 <- mean(DayModel1[,7][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
+                                                    DayModel1$LAT >= minLAT + Resolution*(g-1) & DayModel1$LAT < minLAT + Resolution*g])
       
-      CellAveragedPollutant_2 <- mean(DayModel2[,7][DayModel2$LON >= min(DayModel2$LON) + Resolution*(h-1) & DayModel2$LON < min(DayModel2$LON) + Resolution*h &
-                                                    DayModel2$LAT >= min(DayModel2$LAT) + Resolution*(g-1) & DayModel2$LAT < min(DayModel2$LAT) + Resolution*g])
+      CellAveragedPollutant_2 <- mean(DayModel2[,7][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
+                                                    DayModel2$LAT >= minLAT + Resolution*(g-1) & DayModel2$LAT < minLAT + Resolution*g])
       
       DayModel1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
       DayModel2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
