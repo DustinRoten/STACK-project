@@ -116,9 +116,7 @@ if( interactive() ) {
   
 }
 
-# User information completed
-
-
+# User information completed. The following organizes the pollutant's parameters
 ChemicalParameters1 <- as.numeric(c(ParticleDiameter, ParticleDensity, 1))
 ChemicalParameters2 <- as.numeric(c(ParticleDepoVelocity, ParticleMolecularWeight, ParticleARatio, ParticleDRatio, ParticleHenry))
 ChemicalParameters3 <- as.numeric(c(ParticleHenryConstant, ParticleInCloud, ParticleBelowCloud))
@@ -132,7 +130,7 @@ DaysInMonth <- c(31, if (StartYear %% 4 == 0) {29} else{28}, 31, 30, 31, 30, 31,
 MonthData <- data.frame(MonthNames, DaysInMonth)
 
 
-# Constructing a vector of meteorology file names
+# Constructing a vector of meteorology file names (NAM-12km)
 MeteorologyFileNames <- NULL
 c <- 1
 for(a in 1:12) {
@@ -210,12 +208,8 @@ for(z in 1:6) {     # Begins the "Model Type" loop
                   line <- paste(LocationInformation[i,4], LocationInformation[i,5])
                   write(line, file = "CONTROL", append = TRUE)
             
-              if(file.exists("SETUP.CFG") == TRUE) {
+                  if(file.exists("SETUP.CFG") == TRUE) {file.rename("SETUP.CFG", "NO_SETUP.CFG")} else {}
               
-                  file.rename("SETUP.CFG", "NO_SETUP.CFG")
-              
-              } else {}
-            
               } else if(ModType == "B") {
             
                   if(file.exists("NO_SETUP.CFG") == TRUE) {file.rename("NO_SETUP.CFG", "SETUP.CFG")} else {}
@@ -458,10 +452,10 @@ for(d in 1:nrow(LocationInformation)) {
                   
                     for(h in 1:x_steps) {
                     
-                        CellAveragedPollutant_1 <- mean(DayModel1[,7][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
+                        CellAveragedPollutant_1 <- mean(DayModel1[,5][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
                                                                     DayModel1$LAT >= minLAT + Resolution*(g-1) & DayModel1$LAT < minLAT + Resolution*g])
                     
-                        CellAveragedPollutant_2 <- mean(DayModel2[,7][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
+                        CellAveragedPollutant_2 <- mean(DayModel2[,5][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
                                                                     DayModel2$LAT >= minLAT + Resolution*(g-1) & DayModel2$LAT < minLAT + Resolution*g])
                     
                         DayModel1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
@@ -472,13 +466,16 @@ for(d in 1:nrow(LocationInformation)) {
                 
                 # PAIGE'S THINGS GO HERE!
                 library(geosphere)
-                plant <- c(XXX, XXX) # Location Latitude, Longitude
+                MeanLat <- eval(parse(text = paste("mean(", LocationInformation[d,1], "_", "StackParams", "[,1]", ")", sep = "")))
+                MeanLon<- eval(parse(text = paste("mean(", LocationInformation[d,1], "_", "StackParams", "[,2]", ")", sep = "")))
+                
+                plant <- c(MeanLon, MeanLat) # Location Latitude, Longitude
                 plant2 <- plant
                 
                 # Model - 1  
-                lat <- DayModel1[,4]
-                long <- DayModel1[,5]
-                conc <- DayModel1[,6]
+                lat <- DayModel1[,3]
+                long <- DayModel1[,4]
+                conc <- DayModel1[,5]
                 emit <- cbind(long, lat, conc)
                   
                 ex.angle <- bearing(plant, emit[,1:2])
@@ -487,9 +484,9 @@ for(d in 1:nrow(LocationInformation)) {
                 print(var.angle1)
           
                 # Model - 2        
-                lat2 <- DayModel2[,4]
-                long2 <- DayModel2[,5]
-                conc2 <- DayModel2[,6]
+                lat2 <- DayModel2[,3]
+                long2 <- DayModel2[,4]
+                conc2 <- DayModel2[,5]
                 emit2 <- cbind(long, lat, conc)
                   
                 ex.angle2 <- bearing(plant2, emit2[,1:2])
