@@ -433,10 +433,9 @@ for(d in 1:nrow(LocationInformation)) {
             Model1$DA <- Model1$DA - 1
             Model1$DA[Model1$DA == 0] <- (c-1)
             
-            Metric = NULL
-            Metric2 <- data.frame()
+            Metrics <- data.frame()
             
-            for(f in 1:(c-1) ) {
+            for(f in 1:(c-1) ) {     # Here, the model is incremented for each day and all metrics are used (day variable: "f")
               
                 DayModel1 <- subset(Model1, DA == f)
                 DayModel2 <- subset(Model2, DA == f)
@@ -471,9 +470,6 @@ for(d in 1:nrow(LocationInformation)) {
                     }
                 }
                 
-                # Metric calculation is performed here (as a percentage %)
-                Metric[f] <- ((100*20000*(Resolution*111000)^2)/(2*(LocationInformation[d,2]/(c-1))))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
-                
                 # PAIGE'S THINGS GO HERE!
                 library(geosphere)
                 plant <- c(XXX, XXX) # Location Latitude, Longitude
@@ -497,25 +493,25 @@ for(d in 1:nrow(LocationInformation)) {
                 emit2 <- cbind(long, lat, conc)
                   
                 ex.angle2 <- bearing(plant2, emit2[,1:2])
-                print(ex.angle2)
-                  
                 mean.angle2 <- sum(ex.angle2*emit2)/sum(emit2)
-                print(mean.angle2)
-                  
                 var.angle2 <- sqrt((sum(emit)*(sum(ex.angle - mean.angle)^2))/sum(emit))
-                print(var.angle2)
                 
                 ### Difference of E - A
                 mean.angleX <- mean.angle2 - mean.angle
                 var.angleX <- var.angle2 - var.angle1
                 
-                Metric2[XXX, XXX] <- (XXX, XXX, XXX)# Save metrics in a dataframe here
+                # Metric calculation is performed here (as a percentage %)
+                Metrics[f,1] <- f
+                Metrics[f,2] <- ((100*20000*(Resolution*111000)^2)/(2*(LocationInformation[d,2]/(c-1))))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
+                Metrics[f,3] <- mean.angleX
+                Metrics[f,4] <- var.angleX
                 
                 }
             }
           
             # Write output file here
-            write.csv(Metric, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, sep = ""))
+            names(Metrics) <- c("Day", "MRS", "MeanAngle", "VarAngle")
+            write.csv(Metrics, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, sep = ""))
             
     } else {}
     
@@ -524,9 +520,6 @@ for(d in 1:nrow(LocationInformation)) {
 
 
 ##### Plot Results Here #####
-
-
-
 library(ggplot2)
 library(reshape2)
 
