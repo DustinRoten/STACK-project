@@ -64,7 +64,7 @@ for (i in 0:10) {
   longData2<-melt(DayModel2_Matrix)
   longData2<-longData2[longData2$value!=0,]
   
-  longData3<-melt(DayModel2_Matrix - DayModel1_Matrix)
+  longData3<-melt(sign(DayModel2_Matrix - DayModel1_Matrix)*log(abs(DayModel2_Matrix - DayModel1_Matrix)))
   longData3<-longData3[longData3$value!=0,]
   
   ggplot(longData, aes(x = Var2, y = Var1)) + 
@@ -170,7 +170,7 @@ for (i in 0:10) {
   longData2<-melt(DayModel2_Matrix)
   longData2<-longData2[longData2$value!=0,]
   
-  longData3<-melt(DayModel2_Matrix - DayModel1_Matrix)
+  longData3<-melt(sign(DayModel2_Matrix - DayModel1_Matrix)*log(DayModel2_Matrix - DayModel1_Matrix))
   longData3<-longData3[longData3$value!=0,]
   
   ggplot(longData, aes(x = Var2, y = Var1)) + 
@@ -206,7 +206,21 @@ for (i in 0:10) {
     
 }
 
-plot(Metric)
-plot(Metric2)
+Plot1 <- ggplot(data = Metric, aes(x = V1, y = V2)) +
+            geom_line() +
+            xlab("Angle (x pi)") +
+            ylab("Metric Value (%)") +
+            ggtitle("Angular Sensitivity") +
+            theme_bw()
+
+Plot2 <- ggplot(data = Metric2, aes(x = V1, y = V2)) +
+            geom_line() +
+            xlab("Dilation Factor") +
+            ylab("Metric Value (%)") +
+            ggtitle("Radial Sensitivity") +
+            theme_bw()
+
+ggsave("AngularSensitivity_Plot.png", Plot1, device = "png")
+ggsave("RadialSensitivity_Plot.png", Plot2, device = "png")
 
 
