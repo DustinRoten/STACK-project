@@ -479,9 +479,8 @@ for(d in 1:nrow(LocationInformation)) {
                 emit <- cbind(long, lat, conc)
                   
                 ex.angle <- bearing(plant, emit[,1:2])
-                mean.angle <- sum(ex.angle*emit)/sum(emit)
+                mean.angle1 <- sum(ex.angle*emit)/sum(emit)
                 var.angle1 <- sqrt((sum(na.omit(emit)*(ex.angle - mean.angle)))^2)/sum(na.omit(emit))
-                print(var.angle1)
           
                 # Model - 2        
                 lat2 <- DayModel2[,3]
@@ -494,14 +493,22 @@ for(d in 1:nrow(LocationInformation)) {
                 var.angle2 <- sqrt((sum(emit)*(sum(ex.angle - mean.angle)^2))/sum(emit))
                 
                 ### Difference of E - A
-                mean.angleX <- mean.angle2 - mean.angle
-                var.angleX <- var.angle2 - var.angle1
+                mean.angleX <- mean.angle2 - mean.angle1     # Metrics[,3]
+                var.angleX <- var.angle2 - var.angle1        # Metrics[,4]
+                
+                ### Center of Mass (Goes in Metrics[,5])
+                DayModel1_x <- sum( (DayModel1[,4] - LocationInformation[d,5])*DayModel1[,5] )/sum(DayModel1[,5])
+                DayModel1_y <- sum( (DayModel1[,3] - LocationInformation[d,4])*DayModel1[,5] )/sum(DayModel1[,5])
+                
+                DayModel2_x <- sum( (DayModel2[,4] - LocationInformation[d,5])*DayModel2[,5] )/sum(DayModel2[,5])
+                DayModel2_y <- sum( (DayModel2[,3] - LocationInformation[d,4])*DayModel2[,5] )/sum(DayModel2[,5])
                 
                 # Metric calculation is performed here (as a percentage %)
                 Metrics[f,1] <- f
                 Metrics[f,2] <- ((100*20000*(Resolution*111000)^2)/(2*(LocationInformation[d,2]/(c-1))))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
                 Metrics[f,3] <- mean.angleX
                 Metrics[f,4] <- var.angleX
+                Metrics[f,5] <- sqrt( (DayModel2_x - DayModel1_x)^2 + (DayModel2_y - DayModel1_y)^2)
                 
                 }
             }
