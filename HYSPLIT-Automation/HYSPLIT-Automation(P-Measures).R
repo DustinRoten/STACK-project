@@ -514,16 +514,16 @@ for(d in 1:nrow(LocationInformation)) {
                 Metrics[f,4] <- var.angleX
                 Metrics[f,5] <- sqrt( (DayModel2_x - DayModel1_x)^2 + (DayModel2_y - DayModel1_y)^2)
                 
-                }
-            }
+            }     # Closes the daily loop
           
             # Write output file here
             names(Metrics) <- c("Day", "MRS", "MeanAngle", "VarAngle", "CenterOfMass")
             write.csv(Metrics, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, sep = ""))
             
-    } else {}
-    
-}
+        } else {}     # Closes the conditional != "E" statement
+    }    # Closes each model 
+}    # Closes each location
+
 
 
 
