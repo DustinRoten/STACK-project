@@ -411,6 +411,9 @@ for(z in 1:6) {     # Begins the "Model Type" loop
     }     # Closes LocationInformation
 }     # Closes ModelType
 
+library(geosphere)
+library(ggplot2)
+library(reshape2)
 
 ##### The section that follows is the MRS measure #####
 for(d in 1:nrow(LocationInformation)) {
@@ -464,8 +467,7 @@ for(d in 1:nrow(LocationInformation)) {
                     }
                 }
                 
-                # PAIGE'S THINGS GO HERE!
-                library(geosphere)
+                # Paige's Metrics Begin Here
                 MeanLat <- eval(parse(text = paste("mean(", LocationInformation[d,1], "_", "StackParams", "[,1]", ")", sep = "")))
                 MeanLon<- eval(parse(text = paste("mean(", LocationInformation[d,1], "_", "StackParams", "[,2]", ")", sep = "")))
                 
@@ -490,7 +492,7 @@ for(d in 1:nrow(LocationInformation)) {
                   
                 ex.angle2 <- bearing(plant2, emit2[,1:2])
                 mean.angle2 <- sum(ex.angle2*emit2)/sum(emit2)
-                var.angle2 <- sqrt((sum(emit)*(sum(ex.angle - mean.angle)^2))/sum(emit))
+                var.angle2 <- sqrt((sum(emit)*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2))
                 
                 ### Difference of E - A
                 mean.angleX <- mean.angle2 - mean.angle1     # Metrics[,3]
@@ -514,7 +516,7 @@ for(d in 1:nrow(LocationInformation)) {
             }
           
             # Write output file here
-            names(Metrics) <- c("Day", "MRS", "MeanAngle", "VarAngle")
+            names(Metrics) <- c("Day", "MRS", "MeanAngle", "VarAngle", "CenterOfMass")
             write.csv(Metrics, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, sep = ""))
             
     } else {}
@@ -524,9 +526,6 @@ for(d in 1:nrow(LocationInformation)) {
 
 
 ##### Plot Results Here #####
-library(ggplot2)
-library(reshape2)
-
 for(k in 1:nrow(LocationInformation)) {
   
     for(l in 1:length(ModelType)) {
