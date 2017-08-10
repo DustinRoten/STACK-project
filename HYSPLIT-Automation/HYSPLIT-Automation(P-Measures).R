@@ -13,106 +13,106 @@
 # Ask user for the year of interest, number of locations to be considered and the information at each location.
 if( interactive() ) {
   
-  NAMpath <- readline(prompt = "This script uses NAM - 12km data. Include the NAM directory here - ")  
+    NAMpath <- readline(prompt = "This script uses NAM - 12km data. Include the NAM directory here - ")  
   
-  StartYear <- as.numeric(readline(prompt = "Input Year (YYYY > 2000) - "))
+    StartYear <- as.numeric(readline(prompt = "Input Year (YYYY > 2000) - "))
   
-  NumberOfLocations <- as.numeric(readline(prompt = "Enter the number of emissions sources - "))
+    NumberOfLocations <- as.numeric(readline(prompt = "Enter the number of emissions sources - "))
   
-  # initialize an empty dataframe
-  LocationInformation <- data.frame()
+    # initialize an empty dataframe
+    LocationInformation <- data.frame()
   
-  for(i in 1:NumberOfLocations) {
+    for(i in 1:NumberOfLocations) {
     
-    LocationInformation[i, 1] <- readline(paste(prompt = "Provide a three letter title for location", i, "-", " ", sep = " "))
-    LocationInformation[i, 2] <- as.numeric(readline(paste(prompt = "What is the total eGRID emission value for", LocationInformation[i,1], "in kilograms ?", " ", sep = " ")))
-    LocationInformation[i, 3] <- as.numeric(readline(paste(prompt = "How many exhaust points are there at location", LocationInformation[i,1], "?", " ", sep = " ")))
-    LocationInformation[i, 4] <- as.numeric(readline(paste(prompt = "What is the eGRID latitude value for", LocationInformation[i,1],"?", " ", sep = " ")))
-    LocationInformation[i, 5] <- as.numeric(readline(paste(prompt = "What is the eGRID longitude value for", LocationInformation[i,1],"?", " ", sep = " ")))
+        LocationInformation[i, 1] <- readline(paste(prompt = "Provide a three letter title for location", i, "-", " ", sep = " "))
+        LocationInformation[i, 2] <- as.numeric(readline(paste(prompt = "What is the total eGRID emission value for", LocationInformation[i,1], "in kilograms ?", " ", sep = " ")))
+        LocationInformation[i, 3] <- as.numeric(readline(paste(prompt = "How many exhaust points are there at location", LocationInformation[i,1], "?", " ", sep = " ")))
+        LocationInformation[i, 4] <- as.numeric(readline(paste(prompt = "What is the eGRID latitude value for", LocationInformation[i,1],"?", " ", sep = " ")))
+        LocationInformation[i, 5] <- as.numeric(readline(paste(prompt = "What is the eGRID longitude value for", LocationInformation[i,1],"?", " ", sep = " ")))
     
-  }
-  
-  names(LocationInformation) <- c("Name", "eGRID_Emissions", "Exhaust_Points", "eGRID_Lat", "eGRID_Lon")
-  
-  for(i in 1:nrow(LocationInformation)) {
-    
-    StackParams <- data.frame()
-    
-    for(j in 1:LocationInformation[i, 3]) {
-      
-      Latitude <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
-                                            "Please provide the stack latitude (deg) - ", sep = "")))
-      
-      Longitude <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
-                                             "Please provide the stack longitude (deg) - ", sep = "")))
-      
-      Height <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
-                                          "Please provide the stack height (m) - ", sep = "")))
-      
-      EmisRate <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
-                                            "Please provide the stack emission rate (kg/hr) - ", sep = "")))
-      
-      Area <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
-                                        "Please provide the stack area (m^2) - ", sep = "")))
-      
-      Heat <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
-                                        "Please provide the net stack heat (W) - ", sep = "")))
-      
-      temp <- c(Latitude, Longitude, Height, EmisRate, Area, Heat)
-      
-      StackParams <- rbind(StackParams, temp)
     }
+  
+    names(LocationInformation) <- c("Name", "eGRID_Emissions", "Exhaust_Points", "eGRID_Lat", "eGRID_Lon")
+  
+    for(i in 1:nrow(LocationInformation)) {
     
-    names(StackParams) <- c("Latitude", "Longitude", "Height", "EmisRate", "Area", "Heat")
+        StackParams <- data.frame()
     
-    assign(noquote(paste(LocationInformation[i, 1], "_StackParams", sep = "")), StackParams)
+            for(j in 1:LocationInformation[i, 3]) {
+      
+                Latitude <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                    "Please provide the stack latitude (deg) - ", sep = "")))
+      
+                Longitude <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                    "Please provide the stack longitude (deg) - ", sep = "")))
+      
+                Height <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                  "Please provide the stack height (m) - ", sep = "")))
+      
+                EmisRate <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                    "Please provide the stack emission rate (kg/hr) - ", sep = "")))
+      
+                Area <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                "Please provide the stack area (m^2) - ", sep = "")))
+      
+                Heat <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                "Please provide the net stack heat (W) - ", sep = "")))
+      
+                temp <- c(Latitude, Longitude, Height, EmisRate, Area, Heat)
+      
+                StackParams <- rbind(StackParams, temp)
+            }
     
-  }
+        names(StackParams) <- c("Latitude", "Longitude", "Height", "EmisRate", "Area", "Heat")
+    
+        assign(noquote(paste(LocationInformation[i, 1], "_StackParams", sep = "")), StackParams)
+    
+    }
   
   
   
-  Pollutant <- readline(prompt = "Enter pollutant name (XXXX) - ")
+    Pollutant <- readline(prompt = "Enter pollutant name (XXXX) - ")
   
-  ParticleDiameter <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                     "Please provide the particle diameter (um) - ", sep = ""))
+    ParticleDiameter <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                       "Please provide the particle diameter (um) - ", sep = ""))
   
-  ParticleDensity <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                    "Please provide the particle density (g/cc) - ", sep = ""))
+    ParticleDensity <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                      "Please provide the particle density (g/cc) - ", sep = ""))
   
-  ParticleDepoVelocity <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                         "Please provide the deposition velocity (m/s) - ", sep = ""))
+    ParticleDepoVelocity <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                           "Please provide the deposition velocity (m/s) - ", sep = ""))
   
-  ParticleMolecularWeight <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                            "Please provide the particle molecular weight (g) - ", sep = ""))
+    ParticleMolecularWeight <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                              "Please provide the particle molecular weight (g) - ", sep = ""))
   
-  ParticleARatio <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                   "Please provide the particle A-Ratio - ", sep = ""))
+    ParticleARatio <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                     "Please provide the particle A-Ratio - ", sep = ""))
   
-  ParticleDRatio <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                   "Please provide the particle D-Ratio - ", sep = ""))
+    ParticleDRatio <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                     "Please provide the particle D-Ratio - ", sep = ""))
   
-  ParticleHenry <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                  "Please provide the 'Henry' - ", sep = ""))
+    ParticleHenry <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                    "Please provide the 'Henry' - ", sep = ""))
   
-  ParticleHenryConstant <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                          "Please provide the value for Henry's Constant (M/a) - ", sep = ""))
+    ParticleHenryConstant <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                            "Please provide the value for Henry's Constant (M/a) - ", sep = ""))
   
-  ParticleInCloud <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                    "Please provide the In-cloud value (l/l) - ", sep = ""))
+    ParticleInCloud <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                      "Please provide the In-cloud value (l/l) - ", sep = ""))
   
-  ParticleBelowCloud <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                       "Please provide the Below-Cloud value (1/s) - ", sep = ""))
+    ParticleBelowCloud <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                         "Please provide the Below-Cloud value (1/s) - ", sep = ""))
   
-  ParticleRadioactive <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                        "Please provide the particle halflife (days) - ", sep = ""))
+    ParticleRadioactive <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                          "Please provide the particle halflife (days) - ", sep = ""))
   
-  ParticleResuspensionFactor <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
-                                               "Please provide the pollutant resuspension factor (1/m) - ", sep = ""))
+    ParticleResuspensionFactor <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                                 "Please provide the pollutant resuspension factor (1/m) - ", sep = ""))
   
-  Resolution <- as.numeric(readline(paste(prompt = "Please provie a resolution (in degrees) for this analysis - ")))
+    Resolution <- as.numeric(readline(paste(prompt = "Please provie a resolution (in degrees) for this analysis - ")))
   
   
-  # Insert a parameter checking method here!
+    # Insert a parameter checking method here!
   
 }
 
@@ -418,10 +418,12 @@ library(reshape2)
 ##### The section that follows is the MRS measure #####
 for(d in 1:nrow(LocationInformation)) {
   
+    # Model2 is reserved by default for the "E" scenario (All parameters included)
     Model2 <- as.data.frame(read.table(paste(LocationInformation[d,1], "_", "E", sep = ""), header = TRUE, sep = "")[1:5])
     Model2$DA <- Model2$DA - 1
     Model2$DA[Model2$DA == 0] <- (c-1)
   
+    # The loop below steps through each of the other models and compares them to "E"
     for(e in 1:length(ModelType)) {
         
         if(ModelType[e] != "E") {
