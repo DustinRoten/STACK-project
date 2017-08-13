@@ -484,7 +484,7 @@ for(d in 1:nrow(LocationInformation)) {
                   
                 ex.angle <- bearing(plant, emit[,1:2])
                 mean.angle1 <- sum(ex.angle*emit)/sum(emit)
-                var.angle1 <- sqrt((sum(na.omit(emit)*(ex.angle - mean.angle)))^2)/sum(na.omit(emit))
+                var.angle1 <- sqrt((sum(na.omit(emit)*(ex.angle - mean.angle1)))^2)/sum(na.omit(emit))
           
                 # Model - 2        
                 lat2 <- DayModel2[,3]
