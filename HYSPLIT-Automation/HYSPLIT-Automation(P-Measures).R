@@ -518,7 +518,7 @@ for(d in 1:nrow(LocationInformation)) {
           
             # Write output file here
             names(Metrics) <- c("Day", "MRS", "MeanAngle", "VarAngle", "CenterOfMass")
-            write.csv(Metrics, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, sep = ""))
+            write.csv(Metrics, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, "_", Resolution, sep = ""))
             
         } else {}     # Closes the conditional != "E" statement
     }    # Closes each model 
@@ -540,8 +540,8 @@ for(s in 1:length(ModelType)) {
         file.copy(paste(LocationInformation[u,1], "_", ModelType[s], sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
         file.remove(paste(LocationInformation[u,1], "_", ModelType[s], sep = ""))
         
-        file.copy(paste(LocationInformation[u,1], "_", ModelType[s], "_", StartYear, sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
-        file.remove(paste(LocationInformation[u,1], "_", ModelType[s], "_", StartYear, sep = ""))
+        file.copy(paste(LocationInformation[u,1], "_", ModelType[s], "_", StartYear, "_", Resolution, sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
+        file.remove(paste(LocationInformation[u,1], "_", ModelType[s], "_", StartYear, "_", Resolution, sep = ""))
           
     }
   
