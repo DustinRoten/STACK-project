@@ -490,7 +490,7 @@ for(d in 1:nrow(LocationInformation)) {
                 lat2 <- DayModel2[,3]
                 long2 <- DayModel2[,4]
                 conc2 <- DayModel2[,5]
-                emit2 <- cbind(long, lat, conc)
+                emit2 <- cbind(long2, lat2, conc2)
                   
                 ex.angle2 <- bearing(plant2, emit2[,1:2])
                 mean.angle2 <- sum(ex.angle2*emit2)/sum(emit2)
