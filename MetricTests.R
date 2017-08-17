@@ -220,7 +220,5 @@ Plot2 <- ggplot(data = Metric2, aes(x = V1, y = V2)) +
             ggtitle("Radial Sensitivity") +
             theme_bw()
 
-ggsave("AngularSensitivity_Plot.png", Plot1, device = "png")
-ggsave("RadialSensitivity_Plot.png", Plot2, device = "png")
 
 

@@ -1,0 +1,143 @@
+library(ggplot2)
+library(scales)
+library(ggmap)
+library(reshape2)
+
+Dispersion <- read.delim("JEC-10000m2.txt", header = TRUE, sep = "")[,1:7]
+Dispersion$LAT <- Dispersion$LAT - LocationInformation[1,4]
+Dispersion$LON <- Dispersion$LON - LocationInformation[1,5]
+
+
+for (i in 0:200) {
+  
+    theta <- i/100
+  
+    Rot_Dispersion <- cbind(Dispersion[,1:4],
+                            Dispersion$LON*sinpi(theta) + Dispersion$LAT*cospi(theta),
+                            Dispersion$LON*cospi(theta) - Dispersion$LAT*sinpi(theta),
+                            Dispersion[,7])
+  
+    names(Rot_Dispersion) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
+  
+    # Metric
+  
+    DayModel1 <- Rot_Dispersion
+    DayModel2 <- Dispersion
+  
+    x_range <- max( max(DayModel1$LON), max(DayModel2$LON) ) - min( min(DayModel1$LON), min(DayModel2$LON) ) + 1
+    y_range <- max( max(DayModel1$LAT), max(DayModel2$LAT) ) - min( min(DayModel1$LAT), min(DayModel2$LAT) ) + 1
+  
+    x_steps <- round(x_range/Resolution, 0)
+    y_steps <- round(y_range/Resolution, 0)
+  
+    DayModel1_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
+    DayModel2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
+  
+    # This section of code executes the MRS measure
+  
+    minLON <- min(min(DayModel1$LON), min(DayModel2$LON))
+    minLAT <- min(min(DayModel1$LAT), min(DayModel2$LAT))
+  
+    for (g in 1:y_steps) {
+    
+        for(h in 1:x_steps) {
+      
+            CellAveragedPollutant_1 <- mean(DayModel1[,7][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
+                                                      DayModel1$LAT >= minLAT + Resolution*(g-1) & DayModel1$LAT < minLAT + Resolution*g])
+      
+            CellAveragedPollutant_2 <- mean(DayModel2[,7][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
+                                                      DayModel2$LAT >= minLAT + Resolution*(g-1) & DayModel2$LAT < minLAT + Resolution*g])
+      
+            DayModel1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
+            DayModel2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
+      
+        }
+    
+    }
+  
+      longData<-melt(DayModel1_Matrix)
+      longData<-longData[longData$value!=0,]
+  
+      longData2<-melt(DayModel2_Matrix)
+      longData2<-longData2[longData2$value!=0,]
+  
+      longData3<-melt(sign(DayModel2_Matrix - DayModel1_Matrix)*abs(DayModel2_Matrix - DayModel1_Matrix))
+      longData3<-longData3[longData3$value!=0,]
+  
+      SaveFile <- ggplot(longData3, aes(x = Var2, y = Var1)) + 
+        geom_raster(aes(fill=value)) + 
+        scale_fill_gradient(low="grey90", high="red") +
+        labs(x="letters", y="LETTERS", title="Matrix") +
+        theme_bw() + theme(axis.text.x=element_text(size=9, angle=0, vjust=0.3),
+                          axis.text.y=element_text(size=9),
+                          plot.title=element_text(size=11))
+  
+  # Metric calculation is performed here (as a percentage %)
+  Metric[i+1,1] <- theta
+  Metric[i+1,2] <- ((100*20000*(Resolution*111000)^2)/(2*(12591532084.8523/366)))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
+  
+  
+}
+
+
+
+## Plot the Metric Values
+#vec.breaks <- seq(from = pi/2, to = 2*pi, by = pi/2)
+#pi.halfs <- c(paste(expression(pi), "/2"),paste(seq(from = 3, to = 21, by = 2), "*" , expression(pi), "/2"))
+#pi.fulls <- c(paste(expression(pi)), paste(seq(from = 2, to = 11, by = 1), "*" , expression(pi)))
+#vec.expr <- parse(text = c(rbind(pi.halfs, pi.fulls)))[1:7]
+
+ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
+  geom_line() +
+  ggtitle("Metric Calibration") +
+  xlab("Rotation Angle") +
+  ylab("Metric Value (%)") +
+  theme_bw() +
+  theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
+  theme(plot.title = element_text(size = 30, face = "bold")) +
+  theme(axis.text=element_text(size=15), axis.title=element_text(size=25,face="bold"))
+
+
+
+# Plot the figure
+
+theta <- 0.25
+
+Rot_Dispersion <- cbind(Dispersion[,1:4],
+                        Dispersion$LON*sinpi(theta) + Dispersion$LAT*cospi(theta),
+                        Dispersion$LON*cospi(theta) - Dispersion$LAT*sinpi(theta),
+                        Dispersion[,7])
+
+names(Rot_Dispersion) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
+
+Dispersion$LAT <- Dispersion$LAT + LocationInformation[1,4]
+Dispersion$LON <- Dispersion$LON + LocationInformation[1,5]
+
+Rot_Dispersion$LAT <- Rot_Dispersion$LAT + LocationInformation[1,4]
+Rot_Dispersion$LON <- Rot_Dispersion$LON + LocationInformation[1,5]
+
+
+
+Quantiles <- quantile(Dispersion$CO2, c(0.1, 0.955))
+qn01 <- rescale(c(Quantiles, range(Dispersion$CO2)))
+
+map <- get_map(location = c(lon = -95, lat = 43), zoom = 5, maptype = "terrain", colo = "bw")
+
+ggmap(map) +
+  geom_raster(data = Dispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
+  scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50), values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1)) +
+  coord_cartesian() +
+  theme_bw()
+
+ggmap(map) +
+  geom_raster(data = Rot_Dispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
+  scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50), values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1)) +
+  coord_cartesian() +
+  theme_bw()
+
+
+  
+ggmap(map) +
+  coord_cartesian() +
+  geom_raster(data = Rot_Dispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
+  theme_bw()
