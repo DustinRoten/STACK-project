@@ -88,7 +88,7 @@ for (i in 0:200) {
 
 ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
   geom_line() +
-  ggtitle("Metric Calibration") +
+  ggtitle("Metric Sensitivity to Angular Differences") +
   xlab("Rotation Angle") +
   ylab("Metric Value (%)") +
   theme_bw() +
@@ -116,7 +116,7 @@ RotDispersion$LAT <- RotDispersion$LAT + LocationInformation[1,4]
 RotDispersion$LON <- RotDispersion$LON + LocationInformation[1,5]
 
 
-
+#Dispersion
 Quantiles <- quantile(Dispersion$CO2, c(0.1, 0.955))
 qn01 <- rescale(c(Quantiles, range(Dispersion$CO2)))
 
@@ -126,18 +126,30 @@ ggmap(map) +
   geom_raster(data = Dispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
   scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50),
                        values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1), 
-                       limits = c(0, max(Dispersion$CO2)),
+                       limits = c(min(Dispersion$CO2), max(Dispersion$CO2)),
                        name = "Concentration (kg/cbm)") +
   coord_cartesian() +
   theme_bw() +
   xlab("Longitude") +
   ylab("Latitude")
 
+
+#RotDispersion
+Quantiles <- quantile(RotDispersion$CO2, c(0.1, 0.955))
+qn01 <- rescale(c(Quantiles, range(RotDispersion$CO2)))
+
+map <- get_map(location = c(lon = -95, lat = 43), zoom = 6, maptype = "terrain", colo = "bw")
+
 ggmap(map) +
   geom_raster(data = RotDispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
-  scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50), values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1)) +
+  scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50),
+                       values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1), 
+                       limits = c(min(RotDispersion$CO2), max(RotDispersion$CO2)),
+                       name = "Concentration (kg/cbm)") +
   coord_cartesian() +
-  theme_bw()
+  theme_bw() +
+  xlab("Longitude") +
+  ylab("Latitude")
 
 ###############################
   
