@@ -99,13 +99,16 @@ ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
 
 
 # Plot the figure
+Dispersion <- read.delim("JEC-10000m2.txt", header = TRUE, sep = "")[,1:7]
+Dispersion$LAT <- Dispersion$LAT - LocationInformation[1,4]
+Dispersion$LON <- Dispersion$LON - LocationInformation[1,5]
 
 theta <- 0.25
 
-RotDispersion <- cbind(Dispersion[,1:4],
-                        Dispersion$LON*sinpi(theta) + Dispersion$LAT*cospi(theta),
-                        Dispersion$LON*cospi(theta) - Dispersion$LAT*sinpi(theta),
-                        Dispersion[,7])
+RotDispersion <- as.data.frame(cbind(Dispersion[,1:4],
+                              round(Dispersion$LON*sinpi(theta) + Dispersion$LAT*cospi(theta), 4),
+                              round(Dispersion$LON*cospi(theta) - Dispersion$LAT*sinpi(theta), 4),
+                              Dispersion[,7]))
 
 names(RotDispersion) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
 
@@ -115,45 +118,24 @@ Dispersion$LON <- Dispersion$LON + LocationInformation[1,5]
 RotDispersion$LAT <- RotDispersion$LAT + LocationInformation[1,4]
 RotDispersion$LON <- RotDispersion$LON + LocationInformation[1,5]
 
+write.csv(RotDispersion, "RotatedDispersion")
 
-#Dispersion
-Quantiles <- quantile(Dispersion$CO2, c(0.1, 0.955))
-qn01 <- rescale(c(Quantiles, range(Dispersion$CO2)))
+RotatedDispersion <- read.csv("RotatedDispersion", header = TRUE)
+
+#Rotated Dispersion
+Quantiles <- quantile(RotatedDispersion$CO2, c(0.1, 0.955))
+qn01 <- rescale(c(Quantiles, range(RotatedDispersion$CO2)))
 
 map <- get_map(location = c(lon = -95, lat = 43), zoom = 6, maptype = "terrain", colo = "bw")
 
 ggmap(map) +
   geom_raster(data = Dispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
+  geom_raster(data = RotatedDispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
   scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50),
                        values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1), 
-                       limits = c(min(Dispersion$CO2), max(Dispersion$CO2)),
+                       limits = c(min(RotatedDispersion$CO2), max(RotatedDispersion$CO2)),
                        name = "Concentration (kg/cbm)") +
   coord_cartesian() +
   theme_bw() +
   xlab("Longitude") +
   ylab("Latitude")
-
-
-#RotDispersion
-Quantiles <- quantile(RotDispersion$CO2, c(0.1, 0.955))
-qn01 <- rescale(c(Quantiles, range(RotDispersion$CO2)))
-
-map <- get_map(location = c(lon = -95, lat = 43), zoom = 6, maptype = "terrain", colo = "bw")
-
-ggmap(map) +
-  geom_raster(data = RotDispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
-  scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50),
-                       values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1), 
-                       limits = c(min(RotDispersion$CO2), max(RotDispersion$CO2)),
-                       name = "Concentration (kg/cbm)") +
-  coord_cartesian() +
-  theme_bw() +
-  xlab("Longitude") +
-  ylab("Latitude")
-
-###############################
-  
-ggmap(map) +
-  coord_cartesian() +
-  geom_raster(data = RotDispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
-  theme_bw()
