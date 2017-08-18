@@ -134,7 +134,8 @@ ggmap(map) +
   scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50),
                        values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1), 
                        limits = c(min(RotatedDispersion$CO2), max(RotatedDispersion$CO2)),
-                       name = "Concentration (kg/cbm)") +
+                       name = "Concentration (kg/cbm)",
+                       guide = FALSE) +
   coord_cartesian() +
   theme_bw() +
   xlab("Longitude") +
