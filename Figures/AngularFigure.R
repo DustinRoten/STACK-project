@@ -8,6 +8,7 @@ Dispersion <- read.delim("JEC-10000m2.txt", header = TRUE, sep = "")[,1:7]
 Dispersion$LAT <- Dispersion$LAT - LocationInformation[1,4]
 Dispersion$LON <- Dispersion$LON - LocationInformation[1,5]
 
+Metric <- data.frame()
 
 for (i in 0:200) {
   
@@ -73,7 +74,7 @@ for (i in 0:200) {
                           plot.title=element_text(size=11))
   
   # Metric calculation is performed here (as a percentage %)
-  Metric[i+1,1] <- theta
+  Metric[i+1,1] <- theta*pi
   Metric[i+1,2] <- ((100*20000*(Resolution*111000)^2)/(2*(12591532084.8523/366)))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
   
 }
@@ -88,8 +89,10 @@ for (i in 0:200) {
 
 ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
   geom_line() +
-  ggtitle("Metric Sensitivity to Angular Differences") +
+  ggtitle("Metric Sensitivity to Angular Displacement") +
   xlab("Rotation Angle") +
+  scale_x_continuous(breaks = c(0, pi/2, pi, 3*pi/2, 2*pi),
+                     labels = c(0, expression(pi/2), expression(pi), expression(3*pi/2), expression(2*pi))) +
   ylab("Metric Value (%)") +
   theme_bw() +
   theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
@@ -139,4 +142,7 @@ ggmap(map) +
   coord_cartesian() +
   theme_bw() +
   xlab("Longitude") +
-  ylab("Latitude")
+  ylab("Latitude") +
+  theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
+  theme(plot.title = element_text(size = 30, face = "bold")) +
+  theme(axis.text=element_text(size=15), axis.title=element_text(size=25,face="bold"))
