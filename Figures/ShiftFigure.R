@@ -10,9 +10,9 @@ Dispersion$LON <- Dispersion$LON - LocationInformation[1,5]
 
 Metric <- data.frame()
 
-for (i in 0:200) {
+for (i in 0:20) {
   
-    shift <- i/100
+    shift <- i/10
   
     SftDispersion <- as.data.frame(cbind(Dispersion[,1:4],
                                           Dispersion$LAT,
@@ -74,7 +74,7 @@ for (i in 0:200) {
                           plot.title=element_text(size=11))
   
   # Metric calculation is performed here (as a percentage %)
-  Metric[i+1,1] <- stretch
+  Metric[i+1,1] <- shift
   Metric[i+1,2] <- ((100*20000*(Resolution*111000)^2)/(2*(12591532084.8523/366)))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
   
 }
@@ -89,8 +89,8 @@ for (i in 0:200) {
 
 ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
   geom_line() +
-  ggtitle("Metric Sensitivity to Radial Displacement") +
-  xlab("Dilation Factor") +
+  ggtitle("Metric Sensitivity to Horizontal Displacement") +
+  xlab("Longitudinal Shift (Degrees)") +
   ylab("Metric Value (%)") +
   theme_bw() +
   theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
@@ -101,11 +101,11 @@ ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
 
 
 # Plot the figure
-stretch <- 1 + 25/100
+shift <- 1
 
 SftDispersion <- as.data.frame(cbind(Dispersion[,1:4],
-                                     stretch*Dispersion$LAT,
-                                     stretch*Dispersion$LON,
+                                     Dispersion$LAT,
+                                     Dispersion$LON - shift,
                                      Dispersion[,7]))
 
 names(SftDispersion) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
@@ -127,8 +127,8 @@ qn01 <- rescale(c(Quantiles, range(SftDispersion$CO2)))
 map <- get_map(location = c(lon = -94, lat = 44), zoom = 6, maptype = "terrain", colo = "bw")
 
 ggmap(map) +
+  geom_raster(data = SftDispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE, alpha = 0.4) +
   geom_raster(data = Dispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
-  geom_raster(data = SftDispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE, alpha = 0.45) +
   scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50),
                        values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1), 
                        limits = c(min(SftDispersion$CO2), max(SftDispersion$CO2)),
@@ -143,3 +143,4 @@ ggmap(map) +
   theme(axis.text=element_text(size=15), axis.title=element_text(size=25,face="bold")) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10))) +
   theme(plot.margin=unit(c(1,1,1,1),"cm"))
+
