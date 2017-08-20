@@ -12,18 +12,18 @@ Metric <- data.frame()
 
 for (i in 0:200) {
   
-    theta <- i/100
+    shift <- i/100
   
-    RotDispersion <- as.data.frame(cbind(Dispersion[,1:4],
-                                          Dispersion$LON*sinpi(theta) + Dispersion$LAT*cospi(theta),
-                                          Dispersion$LON*cospi(theta) - Dispersion$LAT*sinpi(theta),
+    SftDispersion <- as.data.frame(cbind(Dispersion[,1:4],
+                                          Dispersion$LAT,
+                                          Dispersion$LON - shift,
                                           Dispersion[,7]))
   
-    names(RotDispersion) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
+    names(SftDispersion) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
   
     # Metric
   
-    DayModel1 <- RotDispersion
+    DayModel1 <- SftDispersion
     DayModel2 <- Dispersion
   
     x_range <- max( max(DayModel1$LON), max(DayModel2$LON) ) - min( min(DayModel1$LON), min(DayModel2$LON) ) + 1
@@ -74,7 +74,7 @@ for (i in 0:200) {
                           plot.title=element_text(size=11))
   
   # Metric calculation is performed here (as a percentage %)
-  Metric[i+1,1] <- theta*pi
+  Metric[i+1,1] <- stretch
   Metric[i+1,2] <- ((100*20000*(Resolution*111000)^2)/(2*(12591532084.8523/366)))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
   
 }
@@ -89,10 +89,8 @@ for (i in 0:200) {
 
 ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
   geom_line() +
-  ggtitle("Metric Sensitivity to Angular Displacement") +
-  xlab("Rotation Angle") +
-  scale_x_continuous(breaks = c(0, pi/2, pi, 3*pi/2, 2*pi),
-                     labels = c(0, expression(pi/2), expression(pi), expression(3*pi/2), expression(2*pi))) +
+  ggtitle("Metric Sensitivity to Radial Displacement") +
+  xlab("Dilation Factor") +
   ylab("Metric Value (%)") +
   theme_bw() +
   theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
@@ -103,41 +101,37 @@ ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
 
 
 # Plot the figure
-Dispersion <- read.delim("JEC-10000m2.txt", header = TRUE, sep = "")[,1:7]
-Dispersion$LAT <- Dispersion$LAT - LocationInformation[1,4]
-Dispersion$LON <- Dispersion$LON - LocationInformation[1,5]
+stretch <- 1 + 25/100
 
-theta <- 0.25
+SftDispersion <- as.data.frame(cbind(Dispersion[,1:4],
+                                     stretch*Dispersion$LAT,
+                                     stretch*Dispersion$LON,
+                                     Dispersion[,7]))
 
-RotDispersion <- as.data.frame(cbind(Dispersion[,1:4],
-                              round(Dispersion$LON*sinpi(theta) + Dispersion$LAT*cospi(theta), 4),
-                              round(Dispersion$LON*cospi(theta) - Dispersion$LAT*sinpi(theta), 4),
-                              Dispersion[,7]))
-
-names(RotDispersion) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
+names(SftDispersion) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
 
 Dispersion$LAT <- Dispersion$LAT + LocationInformation[1,4]
 Dispersion$LON <- Dispersion$LON + LocationInformation[1,5]
 
-RotDispersion$LAT <- RotDispersion$LAT + LocationInformation[1,4]
-RotDispersion$LON <- RotDispersion$LON + LocationInformation[1,5]
+SftDispersion$LAT <- SftDispersion$LAT + LocationInformation[1,4]
+SftDispersion$LON <- SftDispersion$LON + LocationInformation[1,5]
 
-write.csv(RotDispersion, "RotatedDispersion")
+write.csv(SftDispersion, "SftDispersion")
 
-RotatedDispersion <- read.csv("RotatedDispersion", header = TRUE)
+SftDispersion <- read.csv("SftDispersion", header = TRUE)
 
-#Rotated Dispersion
-Quantiles <- quantile(RotatedDispersion$CO2, c(0.1, 0.955))
-qn01 <- rescale(c(Quantiles, range(RotatedDispersion$CO2)))
+#Stretched Dispersion
+Quantiles <- quantile(SftDispersion$CO2, c(0.1, 0.955))
+qn01 <- rescale(c(Quantiles, range(SftDispersion$CO2)))
 
-map <- get_map(location = c(lon = -95, lat = 43), zoom = 6, maptype = "terrain", colo = "bw")
+map <- get_map(location = c(lon = -94, lat = 44), zoom = 6, maptype = "terrain", colo = "bw")
 
 ggmap(map) +
   geom_raster(data = Dispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
-  geom_raster(data = RotatedDispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE) +
+  geom_raster(data = SftDispersion, aes(x = LON, y = LAT, fill = CO2), interpolate = TRUE, alpha = 0.45) +
   scale_fill_gradientn(colours = colorRampPalette(c("limegreen", "yellow", "orange", "red4"))(50),
                        values = c(0, seq(qn01[1], qn01[2], length.out = 2000), 1), 
-                       limits = c(min(RotatedDispersion$CO2), max(RotatedDispersion$CO2)),
+                       limits = c(min(SftDispersion$CO2), max(SftDispersion$CO2)),
                        name = "Concentration (kg/cbm)",
                        guide = FALSE) +
   coord_cartesian() +
