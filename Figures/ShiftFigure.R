@@ -23,80 +23,85 @@ for (i in 0:20) {
   
     # Metric
   
-    DayModel1 <- SftDispersion
-    DayModel2 <- Dispersion
-  
-    x_range <- max( max(DayModel1$LON), max(DayModel2$LON) ) - min( min(DayModel1$LON), min(DayModel2$LON) ) + 1
-    y_range <- max( max(DayModel1$LAT), max(DayModel2$LAT) ) - min( min(DayModel1$LAT), min(DayModel2$LAT) ) + 1
-  
+    x_range <- max( max(DayModel1$LON), max(DayModel2$LON)) - min(min(DayModel1$LON), min(DayModel2$LON)) + 1
+    y_range <- max( max(DayModel1$LAT), max(DayModel2$LAT)) - min(min(DayModel1$LAT), min(DayModel2$LAT)) + 1
+    
     x_steps <- round(x_range/Resolution, 0)
     y_steps <- round(y_range/Resolution, 0)
-  
+    
     DayModel1_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
     DayModel2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
-  
-    # This section of code executes the MRS measure
+    
+    
+    # The metric is calculated here
     minLON <- min(min(DayModel1$LON), min(DayModel2$LON))
     minLAT <- min(min(DayModel1$LAT), min(DayModel2$LAT))
-  
+    
     for (g in 1:y_steps) {
-    
-        for(h in 1:x_steps) {
       
-            CellAveragedPollutant_1 <- mean(DayModel1[,7][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
-                                                      DayModel1$LAT >= minLAT + Resolution*(g-1) & DayModel1$LAT < minLAT + Resolution*g])
-      
-            CellAveragedPollutant_2 <- mean(DayModel2[,7][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
-                                                      DayModel2$LAT >= minLAT + Resolution*(g-1) & DayModel2$LAT < minLAT + Resolution*g])
-      
-            DayModel1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
-            DayModel2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
-      
-        }
-    
+      for(h in 1:x_steps) {
+        
+        CellAveragedPollutant_1 <- mean(DayModel1[,5][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
+                                                        DayModel1$LAT >= minLAT + Resolution*(g-1) & DayModel1$LAT < minLAT + Resolution*g])
+        
+        CellAveragedPollutant_2 <- mean(DayModel2[,5][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
+                                                        DayModel2$LAT >= minLAT + Resolution*(g-1) & DayModel2$LAT < minLAT + Resolution*g])
+        
+        DayModel1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
+        DayModel2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
+        
+      }
     }
-  
-      longData<-melt(DayModel1_Matrix)
-      longData<-longData[longData$value!=0,]
-  
-      longData2<-melt(DayModel2_Matrix)
-      longData2<-longData2[longData2$value!=0,]
-  
-      longData3<-melt(sign(DayModel2_Matrix - DayModel1_Matrix)*abs(DayModel2_Matrix - DayModel1_Matrix))
-      longData3<-longData3[longData3$value!=0,]
-  
-      SaveFile <- ggplot(longData3, aes(x = Var2, y = Var1)) + 
-        geom_raster(aes(fill=value)) + 
-        scale_fill_gradient(low="grey90", high="red") +
-        labs(x="letters", y="LETTERS", title="Matrix") +
-        theme_bw() + theme(axis.text.x=element_text(size=9, angle=0, vjust=0.3),
-                          axis.text.y=element_text(size=9),
-                          plot.title=element_text(size=11))
-  
-  # Metric calculation is performed here (as a percentage %)
-  Metric[i+1,1] <- shift
-  Metric[i+1,2] <- ((100*20000*(Resolution*111000)^2)/(2*(12591532084.8523/366)))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
-  
+    
+    # Paige's Metrics Begin Here
+    MeanLat <- eval(parse(text = paste("mean(", LocationInformation[1,1], "_", "StackParams", "[,1]", ")", sep = "")))
+    MeanLon<- eval(parse(text = paste("mean(", LocationInformation[1,1], "_", "StackParams", "[,2]", ")", sep = "")))
+    
+    plant <- c(MeanLon, MeanLat) # Location Latitude, Longitude
+    plant2 <- plant
+    
+    # Model - 1  
+    lat <- DayModel1[,5]
+    long <- DayModel1[,6]
+    conc <- DayModel1[,7]
+    emit <- cbind(long, lat, conc)
+    
+    ex.angle <- bearing(plant, emit[,1:2])
+    mean.angle1 <- sum(ex.angle*emit[,3])/sum(emit[,3])
+    var.angle1 <- sqrt((sum(na.omit(emit[,3])*(ex.angle - mean.angle1)))^2)/sum(na.omit(emit[,3]))
+    
+    # Model - 2        
+    lat2 <- DayModel2[,5]
+    long2 <- DayModel2[,6]
+    conc2 <- DayModel2[,7]
+    emit2 <- cbind(long2, lat2, conc2)
+    
+    ex.angle2 <- bearing(plant2, emit2[,1:2])
+    mean.angle2 <- sum(ex.angle2*emit2[,3])/sum(emit2[,3])
+    var.angle2 <- sqrt((sum(emit[,3])*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2[,3]))
+    
+    ### Difference of E - A
+    mean.angleX <- mean.angle2 - mean.angle1     # Metrics[,3]
+    var.angleX <- var.angle2 - var.angle1        # Metrics[,4]
+    
+    ### Center of Mass (Goes in Metrics[,5])
+    DayModel1_x <- sum( (DayModel1[,4] - LocationInformation[1,5])*DayModel1[,5] )/sum(DayModel1[,5])
+    DayModel1_y <- sum( (DayModel1[,3] - LocationInformation[1,4])*DayModel1[,5] )/sum(DayModel1[,5])
+    
+    DayModel2_x <- sum( (DayModel2[,4] - LocationInformation[1,5])*DayModel2[,5] )/sum(DayModel2[,5])
+    DayModel2_y <- sum( (DayModel2[,3] - LocationInformation[1,4])*DayModel2[,5] )/sum(DayModel2[,5])
+    
+    # Metric calculation is performed here (as a percentage %)
+    Metric[i+1,1] <- "Shift"
+    Metric[i+1,2] <- shift
+    Metric[i+1,3] <- ((100*20000*(Resolution*111000)^2)/(2*(LocationInformation[1,2]/(366))))*sum(abs(DayModel2_Matrix - DayModel1_Matrix))
+    Metric[i+1,4] <- mean.angleX
+    Metric[i+1,5] <- var.angleX
+    Metric[i+1,6] <- sqrt( (DayModel2_x - DayModel1_x)^2 + (DayModel2_y - DayModel1_y)^2)
 }
 
-
-
-## Plot the Metric Values
-#vec.breaks <- seq(from = pi/2, to = 2*pi, by = pi/2)
-#pi.halfs <- c(paste(expression(pi), "/2"),paste(seq(from = 3, to = 21, by = 2), "*" , expression(pi), "/2"))
-#pi.fulls <- c(paste(expression(pi)), paste(seq(from = 2, to = 11, by = 1), "*" , expression(pi)))
-#vec.expr <- parse(text = c(rbind(pi.halfs, pi.fulls)))[1:7]
-
-ggplot(data = as.data.frame(Metric), aes(x = Metric[1], y = Metric[2])) +
-  geom_line() +
-  ggtitle("Metric Sensitivity to Horizontal Displacement") +
-  xlab("Longitudinal Shift (Degrees)") +
-  ylab("Metric Value (%)") +
-  theme_bw() +
-  theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
-  theme(plot.title = element_text(size = 30, face = "bold")) +
-  theme(axis.text=element_text(size=15), axis.title=element_text(size=25,face="bold")) +
-  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)))
+names(Metric) <- c("Day", "theta", "MRS", "MeanAngle", "StdAngle", "COM")
+write.csv(Metric, "ShiftMetrics")
 
 
 
