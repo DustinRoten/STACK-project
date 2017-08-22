@@ -60,18 +60,18 @@ for (i in 0:400) {
     MeanLat <- eval(parse(text = paste("mean(", LocationInformation[1,1], "_", "StackParams", "[,1]", ")", sep = "")))
     MeanLon<- eval(parse(text = paste("mean(", LocationInformation[1,1], "_", "StackParams", "[,2]", ")", sep = "")))
     
-    plant <- c(MeanLon, MeanLat) # Location Latitude, Longitude
-    plant2 <- plant
+    plant1 <- c(MeanLon, MeanLat) # Location Latitude, Longitude
+    plant2 <- plant1
     
     # Model - 1  
-    lat <- DayModel1[,5]
-    long <- DayModel1[,6]
-    conc <- DayModel1[,7]
-    emit <- cbind(long, lat, conc)
+    lat1 <- DayModel1[,5]
+    long1 <- DayModel1[,6]
+    conc1 <- DayModel1[,7]
+    emit1 <- cbind(long1, lat1, conc1)
     
-    ex.angle <- bearing(plant, emit[,1:2])
-    mean.angle1 <- sum(ex.angle*emit[,3])/sum(emit[,3])
-    var.angle1 <- sqrt((sum(na.omit(emit[,3])*(ex.angle - mean.angle1)))^2)/sum(na.omit(emit[,3]))
+    ex.angle1 <- bearing(plant1, emit1[,1:2])
+    mean.angle1 <- sum(ex.angle1*emit1[,3])/sum(emit1[,3])
+    var.angle1 <- sqrt((sum(na.omit(emit1[,3])*(ex.angle1 - mean.angle1)))^2)/sum(na.omit(emit1[,3]))
     
     # Model - 2        
     lat2 <- DayModel2[,5]
@@ -81,7 +81,7 @@ for (i in 0:400) {
     
     ex.angle2 <- bearing(plant2, emit2[,1:2])
     mean.angle2 <- sum(ex.angle2*emit2[,3])/sum(emit2[,3])
-    var.angle2 <- sqrt((sum(emit[,3])*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2[,3]))
+    var.angle2 <- sqrt((sum(emit2[,3])*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2[,3]))
     
     ### Difference of E - A
     mean.angleX <- mean.angle2 - mean.angle1     # Metrics[,3]
@@ -107,7 +107,7 @@ for (i in 0:400) {
 
 
 names(Metric) <- c("Day", "theta", "MRS", "MeanAngle", "StdAngle", "COM")
-write.csv(Metric, "ShiftMetrics")
+write.csv(Metric, "DilationMetrics")
 
 
 
