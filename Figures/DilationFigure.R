@@ -44,10 +44,10 @@ for (i in 0:400) {
       
       for(h in 1:x_steps) {
         
-        CellAveragedPollutant_1 <- mean(DayModel1[,5][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
+        CellAveragedPollutant_1 <- mean(DayModel1[,7][DayModel1$LON >= minLON + Resolution*(h-1) & DayModel1$LON < minLON + Resolution*h &
                                                         DayModel1$LAT >= minLAT + Resolution*(g-1) & DayModel1$LAT < minLAT + Resolution*g])
         
-        CellAveragedPollutant_2 <- mean(DayModel2[,5][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
+        CellAveragedPollutant_2 <- mean(DayModel2[,7][DayModel2$LON >= minLON + Resolution*(h-1) & DayModel2$LON < minLON + Resolution*h &
                                                         DayModel2$LAT >= minLAT + Resolution*(g-1) & DayModel2$LAT < minLAT + Resolution*g])
         
         DayModel1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
@@ -88,11 +88,11 @@ for (i in 0:400) {
     var.angleX <- var.angle2 - var.angle1        # Metrics[,4]
     
     ### Center of Mass (Goes in Metrics[,5])
-    DayModel1_x <- sum( (DayModel1[,4] - LocationInformation[1,5])*DayModel1[,5] )/sum(DayModel1[,5])
-    DayModel1_y <- sum( (DayModel1[,3] - LocationInformation[1,4])*DayModel1[,5] )/sum(DayModel1[,5])
+    DayModel1_x <- sum( (DayModel1[,6] - LocationInformation[1,5])*DayModel1[,7] )/sum(DayModel1[,7])
+    DayModel1_y <- sum( (DayModel1[,5] - LocationInformation[1,4])*DayModel1[,7] )/sum(DayModel1[,7])
     
-    DayModel2_x <- sum( (DayModel2[,4] - LocationInformation[1,5])*DayModel2[,5] )/sum(DayModel2[,5])
-    DayModel2_y <- sum( (DayModel2[,3] - LocationInformation[1,4])*DayModel2[,5] )/sum(DayModel2[,5])
+    DayModel2_x <- sum( (DayModel2[,6] - LocationInformation[1,5])*DayModel2[,7] )/sum(DayModel2[,7])
+    DayModel2_y <- sum( (DayModel2[,5] - LocationInformation[1,4])*DayModel2[,7] )/sum(DayModel2[,7])
     
     # Metric calculation is performed here (as a percentage %)
     Metric[i+1,1] <- "Radial"
