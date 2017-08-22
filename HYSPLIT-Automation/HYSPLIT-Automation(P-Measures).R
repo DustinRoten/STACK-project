@@ -482,9 +482,9 @@ for(d in 1:nrow(LocationInformation)) {
                 conc <- DayModel1[,5]
                 emit <- cbind(long, lat, conc)
                   
-                ex.angle <- bearing(plant, emit[,1:2])
-                mean.angle1 <- sum(ex.angle*emit)/sum(emit)
-                var.angle1 <- sqrt((sum(na.omit(emit)*(ex.angle - mean.angle1)))^2)/sum(na.omit(emit))
+                ex.angle1 <- bearing(plant, emit[,1:2])
+                mean.angle1 <- sum(ex.angle*emit[,3])/sum(emit[,3])
+                var.angle1 <- sqrt((sum(na.omit(emit[,3])*(ex.angle1 - mean.angle1)))^2)/sum(na.omit(emit[,3]))
           
                 # Model - 2        
                 lat2 <- DayModel2[,3]
@@ -493,8 +493,8 @@ for(d in 1:nrow(LocationInformation)) {
                 emit2 <- cbind(long2, lat2, conc2)
                   
                 ex.angle2 <- bearing(plant2, emit2[,1:2])
-                mean.angle2 <- sum(ex.angle2*emit2)/sum(emit2)
-                var.angle2 <- sqrt((sum(emit)*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2))
+                mean.angle2 <- sum(ex.angle2*emit2[,3])/sum(emit2[,3])
+                var.angle2 <- sqrt((sum(emit2[,3])*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2[,3]))
                 
                 ### Difference of E - A
                 mean.angleX <- mean.angle2 - mean.angle1     # Metrics[,3]
@@ -547,10 +547,12 @@ for(s in 1:length(ModelType)) {
   
 }
 
+
 print("disregard warnings above") 
 setwd(paste("../HYSPLIT-Results-", StartYear, sep = ""))
 
-#Plotting
+
+#Plotting Script added at the end
 library(reshape2)
 library(ggplot2)
 
