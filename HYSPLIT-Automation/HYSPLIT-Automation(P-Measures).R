@@ -482,9 +482,9 @@ for(d in 1:nrow(LocationInformation)) {
                 conc <- DayModel1[,5]
                 emit <- cbind(long, lat, conc)
                   
-                ex.angle <- bearing(plant, emit[,1:2])
-                mean.angle1 <- sum(ex.angle*emit)/sum(emit)
-                var.angle1 <- sqrt((sum(na.omit(emit)*(ex.angle - mean.angle1)))^2)/sum(na.omit(emit))
+                ex.angle1 <- bearing(plant, emit[,1:2])
+                mean.angle1 <- sum(ex.angle*emit[,3])/sum(emit[,3])
+                var.angle1 <- sqrt((sum(na.omit(emit[,3])*(ex.angle1 - mean.angle1)))^2)/sum(na.omit(emit[,3]))
           
                 # Model - 2        
                 lat2 <- DayModel2[,3]
@@ -493,8 +493,8 @@ for(d in 1:nrow(LocationInformation)) {
                 emit2 <- cbind(long2, lat2, conc2)
                   
                 ex.angle2 <- bearing(plant2, emit2[,1:2])
-                mean.angle2 <- sum(ex.angle2*emit2)/sum(emit2)
-                var.angle2 <- sqrt((sum(emit)*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2))
+                mean.angle2 <- sum(ex.angle2*emit2[,3])/sum(emit2[,3])
+                var.angle2 <- sqrt((sum(emit2[,3])*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2[,3]))
                 
                 ### Difference of E - A
                 mean.angleX <- mean.angle2 - mean.angle1     # Metrics[,3]
@@ -547,7 +547,84 @@ for(s in 1:length(ModelType)) {
   
 }
 
+
 print("disregard warnings above") 
-setwd("..")
+setwd(paste("../HYSPLIT-Results-", StartYear, sep = ""))
+
+
+#Plotting Script added at the end
+library(reshape2)
+library(ggplot2)
+
+for (y in 1:length(ModelType)) {
+  
+  if (ModelType[y] != "E") {
+    
+    CombinedMRS <- NULL
+    CombinedMeanAngle <- NULL
+    CombinedVarAngle <- NULL
+    CombinedCOM <- NULL
+    
+    for (x in 1:nrow(LocationInformation)) {
+      
+      ToBeCombined <- read.csv(paste(LocationInformation[x,1], "_", ModelType[y], "_", StartYear, "_", Resolution, sep = ""))
+      
+      CombinedMRS <- as.data.frame(cbind(CombinedMRS, ToBeCombined$MRS))
+      names(CombinedMRS)[x] <- paste(LocationInformation[x,1])
+      
+      CombinedMeanAngle <- as.data.frame(cbind(CombinedMeanAngle, ToBeCombined$MeanAngle))
+      names(CombinedMeanAngle)[x] <- paste(LocationInformation[x,1])
+      
+      CombinedVarAngle <- as.data.frame(cbind(CombinedVarAngle, ToBeCombined$VarAngle))
+      names(CombinedVarAngle)[x] <- paste(LocationInformation[x,1])
+      
+      CombinedCOM <- as.data.frame(cbind(CombinedCOM, ToBeCombined$CenterOfMass))
+      names(CombinedCOM)[x] <- paste(LocationInformation[x,1])
+      
+    }
+    
+    write.csv(CombinedMRS, paste("CombinedMRS", "_", StartYear, "_", ModelType[y], sep = ""))
+    write.csv(CombinedMeanAngle, paste("CombinedMean", "_", StartYear, "_", ModelType[y], sep = ""))
+    write.csv(CombinedVarAngle, paste("CombinedVar", "_", StartYear, "_", ModelType[y], sep = ""))
+    write.csv(CombinedCOM, paste("CombinedCOM", "_", StartYear, "_", ModelType[y], sep = ""))
+    
+  } else {}
+  
+}
+
+
+ModelStatements <- c("All Parameters", "Stack Height", "Stack Diameter", "Exit Velocity", "ERROR!", "All Parameters (Forced 0's)")
+CombinedFileNames <- c("MRS", "Mean", "Var", "COM")
+#Metric Units?
+
+
+for (j in 1:length(CombinedFileNames)) {
+  
+  for (i in 1:length(ModelType)) {
+    
+    if (ModelType[i] != "E") {
+      
+      ToBePlotted <- read.csv(paste("Combined", CombinedFileNames[j], "_", StartYear, "_", ModelType[i], sep = ""))
+      names(ToBePlotted)[1] <- "Day"
+      
+      ToBePlotted <- melt(ToBePlotted, id.vars = "Day", variable.name = "series")
+      
+      SavePlot <- ggplot(data = ToBePlotted, aes(x = Day, y = value)) +
+        geom_line() +
+        ylim(0, max(ToBePlotted$value) + 1) +
+        ylab("Metric (%)") +
+        facet_grid(series ~ .) +
+        ggtitle(paste("Sensitivity to ", ModelStatements[i], " ", "(", Resolution, " ", "Degree Resolution", ")", sep = "")) +
+        theme_bw() +
+        theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
+        theme(plot.title = element_text(size = 30, face = "bold")) +
+        theme(axis.text=element_text(size=15), axis.title=element_text(size=25,face="bold"))
+      
+      ggsave(paste("Results", ModelType[i], "_", CombinedFileNames[j], ".jpg", sep = ""), plot = SavePlot, scale = 1, width = 14, height = 8)
+      
+    } else {}
+  }
+}
+
 
 
