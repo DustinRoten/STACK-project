@@ -221,8 +221,8 @@ STDAngleMeasure <- function(x, y, a, b) {
     mean.angle1 <- sum(ex.angle1*emit1[,3])/sum(emit1[,3])
     mean.angle2 <- sum(ex.angle2*emit2[,3])/sum(emit2[,3])
   
-    std.angle1 <- (sqrt((sum(emit1[,3])*(ex.angle1 - mean.angle1))^2)/sum(emit1[,3]))*(nrow(emit1)/(nrow(emit1) - 1))
-    std.angle2 <- (sqrt((sum(emit2[,3])*(ex.angle2 - mean.angle2))^2)/sum(emit2[,3]))*(nrow(emit2)/(nrow(emit2) - 1))
+    std.angle1 <- (sqrt((sum(emit1[,3]*(ex.angle1 - mean.angle1))^2)/sum(emit1[,3])))*(nrow(emit1)/(nrow(emit1) - 1))
+    std.angle2 <- (sqrt((sum(emit2[,3]*(ex.angle2 - mean.angle2))^2)/sum(emit2[,3])))*(nrow(emit2)/(nrow(emit2) - 1))
     
     return(std.angle2 - std.angle1)
     
