@@ -238,11 +238,11 @@ COMMeasure <- function(x, y, a, b) {
       LAT <- a
       LON <- b
   
-    xx <- sum((Model1[,6] - b)*Model1[,7])/sum(Model1[,7])
-    xy <- sum((Model1[,5] - a)*Model1[,7])/sum(Model1[,7])
+    xx <- sum((111*Model1[,6] - 111*b)*Model1[,7])/sum(Model1[,7])
+    xy <- sum((111*Model1[,5] - 111*a)*Model1[,7])/sum(Model1[,7])
     
-    yx <- sum((Model2[,6] - b)*Model2[,7])/sum(Model2[,7])
-    yy <- sum((Model2[,5] - a)*Model2[,7])/sum(Model2[,7])
+    yx <- sum((111*Model2[,6] - 111*b)*Model2[,7])/sum(Model2[,7])
+    yy <- sum((111*Model2[,5] - 111*a)*Model2[,7])/sum(Model2[,7])
     
     return(sqrt((xx - yx)^2 + (yx - yy)^2))
   
