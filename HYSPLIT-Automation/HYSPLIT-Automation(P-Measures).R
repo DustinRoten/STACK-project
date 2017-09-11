@@ -494,7 +494,7 @@ for(d in 1:nrow(LocationInformation)) {
                   
                 ex.angle2 <- bearing(plant2, emit2[,1:2])
                 mean.angle2 <- sum(ex.angle2*emit2[,3])/sum(emit2[,3])
-                var.angle2 <- sqrt((sum(emit2[,3])*(sum(ex.angle2 - mean.angle2)^2))/sum(emit2[,3]))
+                var.angle2 <- sqrt((sum(na.omit(emit2[,3])*(ex.angle2 - mean.angle2)))^2)/sum(na.omit(emit2[,3]))
                 
                 ### Difference of E - A
                 mean.angleX <- mean.angle2 - mean.angle1     # Metrics[,3]
