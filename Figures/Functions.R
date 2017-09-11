@@ -10,14 +10,14 @@
 #########################################################################
 ShiftToOrigin <- function(w, x, y, z) {
   
-    if(w == "Shift" | "SHIFT" | "S") {
+    if(w == "Shift" | w == "SHIFT" | w == "S") {
   
         x[,5] <- x[,5] - y
         x[,6] <- x[,6] - z
 
     }
   
-    else if(w == "Undo" | "UNDO" | "U") {
+    else if(w == "Undo" | w == "UNDO" | w == "U") {
     
         x[,5] <- x[,5] + y
         x[,6] <- x[,6] + z 
@@ -40,10 +40,7 @@ ShiftDispersion <- function(x, y) {
     
         shift <- y/10
       
-        temp <- as.data.frame(cbind(x[,1:4],
-                                x$LAT,
-                                x$LON - shift,
-                                x[,7]))
+        temp <- as.data.frame(cbind(x[,1:4], x$LAT, x$LON - shift, x[,7]))
     
         names(temp) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
         
@@ -57,7 +54,7 @@ ShiftDispersion <- function(x, y) {
 
 ########################################################################
 # Rotate Dispersion to angle theta (0.01 resolution)               #####
-# RotateDispersion(DISPERSION, AMOUNT (0.01 resoultion/step size)) #####
+# RotateDispersion(DISPERSION, AMOUNT (0.01 resolution/step size)) #####
 ########################################################################
 RotateDispersion <- function(x, y) {
     
@@ -84,7 +81,7 @@ RotateDispersion <- function(x, y) {
 ###############################################################
 RadialDilation <- function(x, y) {
   
-    dilation <- 1 + y/100
+    stretch <- 1 + y/100
     
     RadDilation <- as.data.frame(cbind(x[,1:4],
                                       stretch*x$LAT,
@@ -106,7 +103,6 @@ RadialDilation <- function(x, y) {
 #####################################################################################
 AngularStretch <- function(x, y) {
     
-    TempModel <- x
     x$theta <- atan(x$LAT/x$LON)
     
     MeanAngle <- mean(x[["theta"]])
@@ -118,7 +114,7 @@ AngularStretch <- function(x, y) {
       
         if(x$theta[i] > MeanAngle) {StretchedAngles[i] <- x$theta[i]*AngleStretch}
         else if(x$theta[i] < MeanAngle) {StretchedAngles[i] <- x$theta[i]*(-1*AngleStretch)}
-        else {x$theta[i] <- StretchedAngles[i]}
+        else {StretchedAngles[i] <- x$theta[i]}
       
     }
     
@@ -231,19 +227,32 @@ STDAngleMeasure <- function(x, y, a, b) {
 
 
 # Center of Mass Measurement
-COMMeasure <- function(x, y, a, b) {
-  
-      Model1 <- x
-      Model2 <- y
-      LAT <- a
-      LON <- b
-  
-    xx <- sum((111*Model1[,6] - 111*b)*Model1[,7])/sum(Model1[,7])
-    xy <- sum((111*Model1[,5] - 111*a)*Model1[,7])/sum(Model1[,7])
+COMMeasure <- function(w, x, y, a, b) {
+      
+    AtOrigin <- w
+    Model1 <- x
+    Model2 <- y
+    LAT <- a
+    LON <- b
     
-    yx <- sum((111*Model2[,6] - 111*b)*Model2[,7])/sum(Model2[,7])
-    yy <- sum((111*Model2[,5] - 111*a)*Model2[,7])/sum(Model2[,7])
+    if(w == "T" | w == "t" | w == "TRUE" | w == "True" | w == "true" | w == TRUE) {
+        
+        xx <- sum((111*Model1[,6])*Model1[,7])/sum(Model1[,7])
+        xy <- sum((111*Model1[,5])*Model1[,7])/sum(Model1[,7])
+        
+        yx <- sum((111*Model2[,6])*Model2[,7])/sum(Model2[,7])
+        yy <- sum((111*Model2[,5])*Model2[,7])/sum(Model2[,7])
+        
+    } else {
     
+        xx <- sum((111*Model1[,6] - 111*b)*Model1[,7])/sum(Model1[,7])
+        xy <- sum((111*Model1[,5] - 111*a)*Model1[,7])/sum(Model1[,7])
+    
+        yx <- sum((111*Model2[,6] - 111*b)*Model2[,7])/sum(Model2[,7])
+        yy <- sum((111*Model2[,5] - 111*a)*Model2[,7])/sum(Model2[,7])
+    
+    }
+          
     return(sqrt((xx - yx)^2 + (yx - yy)^2))
   
 }
