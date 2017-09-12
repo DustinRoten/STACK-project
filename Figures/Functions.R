@@ -112,13 +112,13 @@ AngularStretch <- function(x, y) {
     StretchedAngles = NULL
     for(i in 1:nrow(x)) {
       
-        if(x$theta[i] > MeanAngle) {StretchedAngles[i] <- x$theta[i]*AngleStretch}
-        else if(x$theta[i] < MeanAngle) {StretchedAngles[i] <- x$theta[i]*(-1*AngleStretch)}
-        else {StretchedAngles[i] <- x$theta[i]}
+        StretchedAngles[i] <- x$theta[i] + AngleStretch*(x$theta[i] - MeanAngle) 
       
     }
     
     AngStretch <- as.data.frame(cbind(x[,1:4], sin(StretchedAngles), cos(StretchedAngles), x[,7]))
+    
+    names(AngStretch) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
     
     return(AngStretch)
     

@@ -267,3 +267,65 @@ for (i in 0:200) {
 }
 
 names(AngularStretchMetricValues) <- c("Factor", "MRS", "MeanAngle", "STDAngle", "COM")
+
+
+
+### Plot 1: Angular Stretch Metric, MRS ###
+p <- ggplot(data = AngularStretchMetricValues, aes(x = Factor, y = MRS)) +
+  geom_line() +
+  xlab("Dilation Factor") +
+  ylab(expression(Phi*" (%)")) +
+  theme_bw() +
+  theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
+  theme(plot.title = element_text(size = 30, face = "bold")) +
+  theme(axis.text=element_text(size=20), axis.title=element_text(size=25,face="bold")) +
+  theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10))) +
+  theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))
+
+ggsave("AngStretch-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+
+
+### Plot 2: Angular Stretch Metric, MeanAngle ###
+p <- ggplot(data = AngularStretchMetricValues, aes(x = Factor, y = MeanAngle)) +
+  geom_line() +
+  xlab("Dilation Factor") +
+  ylab(expression(Delta*bar(theta)*" (Degrees)")) +
+  theme_bw() +
+  theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
+  theme(plot.title = element_text(size = 30, face = "bold")) +
+  theme(axis.text=element_text(size=20), axis.title=element_text(size=25,face="bold")) +
+  theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10))) +
+  theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))
+
+ggsave("AngStretch-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+
+
+### Plot 3: Angular Stretch Metric, STDAngle ###
+p <- ggplot(data = AngularStretchMetricValues, aes(x = Factor, y = STDAngle)) +
+  geom_line() +
+  xlab("Dilation Factor") +
+  ylab(expression(Delta*sigma[bar(theta)]*" (Degrees)")) +
+  ylim(c(-1,1)) +
+  theme_bw() +
+  theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
+  theme(plot.title = element_text(size = 30, face = "bold")) +
+  theme(axis.text=element_text(size=20), axis.title=element_text(size=25,face="bold")) +
+  theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10))) +
+  theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))
+
+ggsave("AngStretch-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+
+
+### Plot 4: Angular Stretch Metric, COM ###
+p <- ggplot(data = AngularStretchMetricValues, aes(x = Factor, y = COM)) +
+  geom_line() +
+  xlab("Dilation Factor") +
+  ylab(expression(Delta*"|r|"*" (km)")) +
+  theme_bw() +
+  theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
+  theme(plot.title = element_text(size = 30, face = "bold")) +
+  theme(axis.text=element_text(size=20), axis.title=element_text(size=25,face="bold")) +
+  theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10))) +
+  theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))
+
+ggsave("AngStretch-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
