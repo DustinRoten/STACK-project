@@ -483,7 +483,7 @@ for(d in 1:nrow(LocationInformation)) {
                 emit <- cbind(long, lat, conc)
                   
                 ex.angle1 <- bearing(plant, emit[,1:2])
-                mean.angle1 <- sum(ex.angle*emit[,3])/sum(emit[,3])
+                mean.angle1 <- sum(ex.angle1*emit[,3])/sum(emit[,3])
                 var.angle1 <- sqrt((sum(na.omit(emit[,3])*(ex.angle1 - mean.angle1)))^2)/sum(na.omit(emit[,3]))
           
                 # Model - 2        
