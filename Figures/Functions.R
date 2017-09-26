@@ -107,16 +107,33 @@ AngularStretch <- function(x, y) {
     
     MeanAngle <- mean(x[["theta"]])
     
-    AngleStretch <- 1 + y/100
+    AngleStretch <- y/100
     
     StretchedAngles = NULL
+    AngStretchLAT = NULL
+    AngStretchLON = NULL
+    
     for(i in 1:nrow(x)) {
       
-        StretchedAngles[i] <- x$theta[i] + AngleStretch*(x$theta[i] - MeanAngle) 
-      
+        if(x$theta[i] > MeanAngle) {
+          
+            StretchedAngles[i] <- AngleStretch*abs(x$theta[i] - MeanAngle)
+            
+        } else if(x$theta[i] < MeanAngle) {
+          
+            StretchedAngles[i] <- AngleStretch*abs(x$theta[i] - MeanAngle)
+          
+        } else {StretchedAngles[i] <- x$theta[i]}
+            
+    AngStretchLAT[i] <- x$LON[i]*sin(StretchedAngles[i]) + x$LAT[i]*cos(StretchedAngles[i])
+    AngStretchLON[i] <- x$LON[i]*cos(StretchedAngles[i]) - x$LAT[i]*sin(StretchedAngles[i])
+        
     }
     
-    AngStretch <- as.data.frame(cbind(x[,1:4], sin(StretchedAngles), cos(StretchedAngles), x[,7]))
+    AngStretch <- as.data.frame(cbind(x[,1:4],
+                                AngStretchLAT,
+                                AngStretchLON,
+                                x[,7]))
     
     names(AngStretch) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
     
