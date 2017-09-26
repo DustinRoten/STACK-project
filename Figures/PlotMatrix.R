@@ -18,13 +18,10 @@ DispersionAtOrigin <- ShiftToOrigin("S", Dispersion, PlantLAT, PlantLON)
 
 ##### Horizontal Shift #####
 ShiftMetricValues <- data.frame()
-<<<<<<< HEAD
+
 for(i in 0:50) {
-    ShiftedDispersion <- ShiftDispersion(DispersionAtOrigin, i)
-=======
-for(i in 50:50) {
     ShiftedDispersion <- ShiftDispersion(Dispersion, i)
->>>>>>> 5f9547502c010755cb988798e8e65573c7f7854b
+
     ShiftMetricValues[i+1, 1] <- i/10
     ShiftMetricValues[i+1, 2] <- MRSMeasure(ShiftedDispersion, DispersionAtOrigin, Emissions, 0.1)
     ShiftMetricValues[i+1, 3] <- MeanAngleMeasure(ShiftedDispersion, DispersionAtOrigin, 0, 0)
@@ -101,7 +98,7 @@ ggsave("Shift-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, u
 ### Angular Rotation ###
 RotationMetricValues <- data.frame()
 
-for(i in 200:200) {
+for(i in 0:200) {
   
     RotatedDispersion <- RotateDispersion(DispersionAtOrigin, i)
     RotationMetricValues[i+1, 1] <- i/100
@@ -179,7 +176,7 @@ ggsave("Rotation-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8
 
 ##### Dilation (Radial?) #####
 RadialStretchMetricValues <- data.frame()
-for(i in 200:200) {
+for(i in 0:200) {
   
     RadialStretchDispersion <- RadialDilation(DispersionAtOrigin, i)
     RadialStretchMetricValues[i+1, 1] <- i/100
@@ -258,12 +255,9 @@ ggsave("RadStretch-COM-Calibration.jpg", p, device = "jpg", width = 10, height =
 ### Angular Stretch ###
 
 AngularStretchMetricValues <- data.frame()
-<<<<<<< HEAD
-for (i in 0:100) {
-=======
-for (i in 200:200) {
->>>>>>> 5f9547502c010755cb988798e8e65573c7f7854b
-  
+
+for (i in 0:10) {
+
     AngularStretchDispersion <- AngularStretch(DispersionAtOrigin, i)
     AngularStretchMetricValues[i+1, 1] <- i/100
     AngularStretchMetricValues[i+1, 2] <- MRSMeasure(AngularStretchDispersion, DispersionAtOrigin, Emissions, 0.1)
