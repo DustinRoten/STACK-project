@@ -162,7 +162,6 @@ MRSMeasure <- function(w, x, y, z) {
   
     Model1_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
     Model2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
-    Ratio = NULL
   
     minLON <- min(min(Model1$LON), min(Model2$LON))
     minLAT <- min(min(Model1$LAT), min(Model2$LAT))
@@ -187,7 +186,7 @@ MRSMeasure <- function(w, x, y, z) {
     size1 <- length(which(Model1_Matrix != 0))
     size2 <- length(which(Model2_Matrix != 0))
     
-    Ratio[i+1] <- (size1 - size2)/mean(c(size1, size2))
+    Ratio <- (size1 - size2)/mean(c(size1, size2))
     
     for (g in 1:y_steps) {
       
