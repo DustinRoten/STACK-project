@@ -19,7 +19,7 @@ DispersionAtOrigin <- ShiftToOrigin("S", Dispersion, PlantLAT, PlantLON)
 ##### Horizontal Shift #####
 ShiftMetricValues <- data.frame()
 
-for(i in 0:50) {
+for(i in 0:10) {
     ShiftedDispersion <- ShiftDispersion(Dispersion, i)
 
     ShiftMetricValues[i+1, 1] <- i/10
@@ -256,7 +256,7 @@ ggsave("RadStretch-COM-Calibration.jpg", p, device = "jpg", width = 10, height =
 
 AngularStretchMetricValues <- data.frame()
 
-for (i in 0:10) {
+for (i in 0:50) {
 
     AngularStretchDispersion <- AngularStretch(DispersionAtOrigin, i)
     AngularStretchMetricValues[i+1, 1] <- i/100
