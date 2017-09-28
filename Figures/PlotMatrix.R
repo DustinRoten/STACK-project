@@ -6,7 +6,9 @@ library(reshape2)
 library(scales)
 library(ggmap)
 library(geosphere)
+library(mailR)
 source("Functions.R")
+source("EmailFunction.R")
 
 # Read in file
 Dispersion <- read.delim("JEC-10000m2.txt", header = TRUE, sep = "")[,1:7]
@@ -16,11 +18,13 @@ Emissions <- 12591532084.8523
 
 DispersionAtOrigin <- ShiftToOrigin("S", Dispersion, PlantLAT, PlantLON)
 
+BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity ploting script is 0% complete... Beginning horizontal shift now.")
+
 ##### Horizontal Shift #####
 ShiftMetricValues <- data.frame()
 
-for(i in 0:10) {
-    ShiftedDispersion <- ShiftDispersion(Dispersion, i)
+for(i in 0:50) {
+    ShiftedDispersion <- ShiftDispersion(DispersionAtOrigin, i)
 
     ShiftMetricValues[i+1, 1] <- i/10
     ShiftMetricValues[i+1, 2] <- MRSMeasure(ShiftedDispersion, DispersionAtOrigin, Emissions, 0.1)
@@ -67,6 +71,7 @@ p <- ggplot(data = ShiftMetricValues, aes(x = Factor, y = STDAngle)) +
   geom_line() +
   xlab("Horizontal Shift (Degrees)") +
   ylab("") +
+  ylim(c(-1,1)) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -93,7 +98,7 @@ ggsave("Shift-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, u
 
 ###################################################################################################################
 
-
+BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity ploting script is 25% complete... Beginning angular rotation now.")
 
 ### Angular Rotation ###
 RotationMetricValues <- data.frame()
@@ -146,6 +151,7 @@ p <- ggplot(data = RotationMetricValues, aes(x = Factor, y = STDAngle)) +
   geom_line() +
   xlab("Rotation (Degrees)") +
   ylab("") +
+  ylim(-1,1) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -170,9 +176,9 @@ p <- ggplot(data = RotationMetricValues, aes(x = Factor, y = COM)) +
 
 ggsave("Rotation-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
+BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity ploting script is 50% complete... Beginning radial dilation now.")
+
 ###################################################################################################################
-
-
 
 ##### Dilation (Radial?) #####
 RadialStretchMetricValues <- data.frame()
@@ -224,6 +230,7 @@ p <- ggplot(data = RadialStretchMetricValues, aes(x = Factor, y = STDAngle)) +
   geom_line() +
   xlab("Dilation Factor") +
   ylab("") +
+  ylim(c(-1,1)) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -248,15 +255,15 @@ p <- ggplot(data = RadialStretchMetricValues, aes(x = Factor, y = COM)) +
 
 ggsave("RadStretch-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
+BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity ploting script is 75% complete... Beginning angular stretch now.")
+
 ###############################################################################################################
-
-
 
 ### Angular Stretch ###
 
 AngularStretchMetricValues <- data.frame()
 
-for (i in 0:50) {
+for (i in 0:100) {
 
     AngularStretchDispersion <- AngularStretch(DispersionAtOrigin, i)
     AngularStretchMetricValues[i+1, 1] <- i/100
@@ -306,6 +313,7 @@ p <- ggplot(data = AngularStretchMetricValues, aes(x = Factor, y = STDAngle)) +
   geom_line() +
   xlab("Dilation Factor") +
   ylab("") +
+  ylim(c(-1,1)) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -329,3 +337,32 @@ p <- ggplot(data = AngularStretchMetricValues, aes(x = Factor, y = COM)) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
 ggsave("AngStretch-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+
+BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity ploting script is 100% complete... Beginning file transfer now.")
+
+##### Moving files #####
+NAME <- c("Shift-COM-Calibration.jpg",
+          "Shift-MRS-Calibration.jpg",
+          "Shift-MeanAngle-Calibration.jpg",
+          "Shift-STDAngle-Calibration.jpg",
+          "RadStretch-COM-Calibration.jpg",
+          "RadStretch-MRS-Calibration.jpg",
+          "RadStretch-MeanAngle-Calibration.jpg",
+          "RadStretch-STDAngle-Calibration.jpg",
+          "Rotation-COM-Calibration.jpg",
+          "Rotation-MRS-Calibration.jpg",
+          "Rotation-MeanAngle-Calibration.jpg",
+          "Rotation-STDAngle-Calibration.jpg",
+          "AngStretch-COM-Calibration.jpg",
+          "AngStretch-MRS-Calibration.jpg",
+          "AngStretch-MeanAngle-Calibration.jpg",
+          "AngStretch-STDAngle-Calibration.jpg")
+
+TEST = NULL
+for(i in 1:length(NAME)) {
+    
+    TEST[i] <- file.exists(paste(NAME[i]))
+    file.copy(from = paste(NAME[i]), to = paste("~/Google Drive/NASA/HysplitPaper1/images/",NAME[i], sep = ""), overwrite = TRUE)
+    file.remove(paste(NAME[i]))
+    TEST
+}
