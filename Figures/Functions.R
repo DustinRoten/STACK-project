@@ -202,7 +202,7 @@ MRSMeasure <- function(w, x, y, z) {
 
     if(Dispersion[1,1] %% 4 == 0) {Day <- 366} else {Day <- 365}
           
-    MRSMeasureValue <- ((100*10000*(Resolution*111000)^2))/((Emissions/Day)*sum(abs(Model2_Matrix - Model1_Matrix)))
+    MRSMeasureValue <- ((100*10000*(Resolution*111000)^2)/((Emissions/Day)))*sum(abs(Model2_Matrix - Model1_Matrix))
 
     return(MRSMeasureValue)
   
