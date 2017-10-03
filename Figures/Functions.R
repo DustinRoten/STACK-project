@@ -183,10 +183,10 @@ MRSMeasure <- function(w, x, y, z) {
     }
     
     # Scaling
-    size1 <- length(which(Model1_Matrix != 0))
-    size2 <- length(which(Model2_Matrix != 0))
+    sum1 <- sum(Model1_Matrix)
+    sum2 <- sum(Model2_Matrix)
     
-    Ratio <- (size1 - size2)/mean(c(size1, size2))
+    Ratio <- (sum1 - sum2)/mean(c(sum1, sum2))
     
     for (g in 1:y_steps) {
       
