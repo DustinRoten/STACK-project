@@ -1,4 +1,4 @@
-  # Dustin Roten - Generates Metric Sensitivity Plots (2017)
+# Dustin Roten - Generates Metric Sensitivity Plots (2017)
 
 # Load required libraries
 library(ggplot2)
