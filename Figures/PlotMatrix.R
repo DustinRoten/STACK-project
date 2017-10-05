@@ -7,7 +7,7 @@ library(scales)
 library(ggmap)
 library(geosphere)
 library(mailR)
-source("Functions.R")
+source("DEMOFunctions.R")
 source("EmailFunction.R")
 
 # Read in file

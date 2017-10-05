@@ -182,27 +182,11 @@ MRSMeasure <- function(w, x, y, z) {
         }
     }
     
-    # Scaling
-    sum1 <- sum(Model1_Matrix)
-    sum2 <- sum(Model2_Matrix)
-    
-    Ratio <- (sum1 - sum2)/mean(c(sum1, sum2))
-    
-    for (g in 1:y_steps) {
-      
-        for(h in 1:x_steps) {
-        
-            CellAveragedPollutant_1 <- mean(Model1[,7][Model1$LON >= minLON + Resolution*(h-1) & Model1$LON < minLON + Resolution*h &
-                                                     Model1$LAT >= minLAT + Resolution*(g-1) & Model1$LAT < minLAT + Resolution*g])
-        
-            Model1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, (1+Ratio)*CellAveragedPollutant_1)
-        
-        }
-    }
+    Model1_Matrix <- Model1_Matrix*(sum(Model1_Matrix)/sum(Model2_Matrix))
 
     if(Dispersion[1,1] %% 4 == 0) {Day <- 366} else {Day <- 365}
           
-    MRSMeasureValue <- ((100*10000*(Resolution*111000)^2)/((Emissions/Day)))*sum(abs(Model2_Matrix - Model1_Matrix))
+    MRSMeasureValue <- (1/(2*sum(Model2_Matrix)))*sum(abs(Model2_Matrix - Model1_Matrix))
 
     return(MRSMeasureValue)
   
