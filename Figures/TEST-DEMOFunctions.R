@@ -157,13 +157,13 @@ TESTAngularStretch <- function(x, y) {
     names(AngStretch) <- c("YEAR", "MO", "DA", "HR", "LAT", "LON", "CO2")
     
     Dist1 <- sqrt(x$LAT^2 + x$LON^2)
-    Dist2 <- sqrt(RadDilation$LAT^2 + RadDilation$LON^2)
+    Dist2 <- sqrt(AngStretch$LAT^2 + AngStretch$LON^2)
   
     MeanDist1 <- mean(sqrt(x$LAT^2 + x$LON^2))
-    MeanDist2 <- mean(sqrt(RadDilation$LAT^2 + RadDilation$LON^2))
+    MeanDist2 <- mean(sqrt(AngStretch$LAT^2 + AngStretch$LON^2))
   
     StandDivRadial1 <- sd(atan(x$LAT/x$LON))
-    StandDivRadial2 <- sd(atan(RadDilation$LAT/RadDilation$LON))
+    StandDivRadial2 <- sd(atan(AngStretch$LAT/AngStretch$LON))
   
     ScaleFactor <- 1 - ((MeanDist1*(StandDivRadial1^2))/(MeanDist2*(StandDivRadial2^2)))*
       exp(0.5*(((StandDivRadial2*Dist1)^2 - (StandDivRadial1*Dist2)^2)/(StandDivRadial1*StandDivRadial2)^2))
