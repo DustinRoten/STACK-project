@@ -140,7 +140,7 @@ TESTAngularStretch <- function(x, y) {
       
         } else if(x$theta[i] < MeanAngle) {
       
-            StretchedAngles[i] <- AngleStretch*abs(x$theta[i] - MeanAngle)
+            StretchedAngles[i] <- -1*AngleStretch*abs(x$theta[i] - MeanAngle)
       
         } else {StretchedAngles[i] <- x$theta[i]}
     
