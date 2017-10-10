@@ -9,6 +9,7 @@ library(geosphere)
 library(mailR)
 source("DEMOFunctions.R")
 source("EmailFunction.R")
+source("TEST-DemoFunctions.R")
 
 # Read in file
 Dispersion <- read.delim("JEC-10000m2.txt", header = TRUE, sep = "")[,1:7]
@@ -27,7 +28,7 @@ for(i in 0:50) {
     ShiftedDispersion <- ShiftDispersion(DispersionAtOrigin, i)
 
     ShiftMetricValues[i+1, 1] <- i/10
-    ShiftMetricValues[i+1, 2] <- MRSMeasure(ShiftedDispersion, DispersionAtOrigin, Emissions, 0.1)
+    ShiftMetricValues[i+1, 2] <- TESTMRSMeasure(ShiftedDispersion, DispersionAtOrigin, Emissions, 0.1)
     ShiftMetricValues[i+1, 3] <- MeanAngleMeasure(ShiftedDispersion, DispersionAtOrigin, 0, 0)
     ShiftMetricValues[i+1, 4] <- STDAngleMeasure(ShiftedDispersion, DispersionAtOrigin, 0, 0)
     ShiftMetricValues[i+1, 5] <- COMMeasure("F", ShiftedDispersion, DispersionAtOrigin, 0, 0)
@@ -107,7 +108,7 @@ for(i in 0:200) {
   
     RotatedDispersion <- RotateDispersion(DispersionAtOrigin, i)
     RotationMetricValues[i+1, 1] <- i/100
-    RotationMetricValues[i+1, 2] <- MRSMeasure(RotatedDispersion, DispersionAtOrigin, Emissions, 0.1)
+    RotationMetricValues[i+1, 2] <- TESTMRSMeasure(RotatedDispersion, DispersionAtOrigin, Emissions, 0.1)
     RotationMetricValues[i+1, 3] <- MeanAngleMeasure(RotatedDispersion, DispersionAtOrigin, 0, 0)
     RotationMetricValues[i+1, 4] <- STDAngleMeasure(RotatedDispersion, DispersionAtOrigin, 0, 0)
     RotationMetricValues[i+1, 5] <- COMMeasure("T", RotatedDispersion, DispersionAtOrigin, 0, 0)
@@ -184,9 +185,9 @@ BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plot
 RadialStretchMetricValues <- data.frame()
 for(i in 0:200) {
   
-    RadialStretchDispersion <- RadialDilation(DispersionAtOrigin, i)
-    RadialStretchMetricValues[i+1, 1] <- i/100
-    RadialStretchMetricValues[i+1, 2] <- MRSMeasure(RadialStretchDispersion, DispersionAtOrigin, Emissions, 0.1)
+    RadialStretchDispersion <- TESTRadialDilation(DispersionAtOrigin, i)
+    RadialStretchMetricValues[i+1, 1] <- 1 + i/100
+    RadialStretchMetricValues[i+1, 2] <- TESTMRSMeasure(RadialStretchDispersion, DispersionAtOrigin, Emissions, 0.1)
     RadialStretchMetricValues[i+1, 3] <- MeanAngleMeasure(RadialStretchDispersion, DispersionAtOrigin, 0, 0)
     RadialStretchMetricValues[i+1, 4] <- STDAngleMeasure(RadialStretchDispersion, DispersionAtOrigin, 0, 0)
     RadialStretchMetricValues[i+1, 5] <- COMMeasure("T", RadialStretchDispersion, DispersionAtOrigin, 0, 0)
@@ -215,6 +216,7 @@ p <- ggplot(data = RadialStretchMetricValues, aes(x = Factor, y = MeanAngle)) +
   geom_line() +
   xlab("Dilation Factor") +
   ylab("") +
+  ylim(c(-1,1)) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -265,9 +267,9 @@ AngularStretchMetricValues <- data.frame()
 
 for (i in 0:100) {
 
-    AngularStretchDispersion <- AngularStretch(DispersionAtOrigin, i)
+    AngularStretchDispersion <- TESTAngularStretch(DispersionAtOrigin, i)
     AngularStretchMetricValues[i+1, 1] <- i/100
-    AngularStretchMetricValues[i+1, 2] <- MRSMeasure(AngularStretchDispersion, DispersionAtOrigin, Emissions, 0.1)
+    AngularStretchMetricValues[i+1, 2] <- TESTMRSMeasure(AngularStretchDispersion, DispersionAtOrigin, Emissions, 0.1)
     AngularStretchMetricValues[i+1, 3] <- MeanAngleMeasure(AngularStretchDispersion, DispersionAtOrigin, 0, 0)
     AngularStretchMetricValues[i+1, 4] <- STDAngleMeasure(AngularStretchDispersion, DispersionAtOrigin, 0, 0)
     AngularStretchMetricValues[i+1, 5] <- COMMeasure("T", AngularStretchDispersion, DispersionAtOrigin, 0, 0)
