@@ -98,8 +98,8 @@ TESTRadialDilation <- function(x, y) {
     StandDivRadial1 <- sd(atan(x$LAT/x$LON))
     StandDivRadial2 <- sd(atan(RadDilation$LAT/RadDilation$LON))
     
-    ScaleFactor <- ((MeanDist2*(StandDivRadial2^2))/(MeanDist1*(StandDivRadial1^2)))*
-      exp(0.5*(((StandDivRadial1*Dist2)^2 - (StandDivRadial2*Dist1)^2)/(StandDivRadial1*StandDivRadial2)^2))
+    ScaleFactor <- 1 - ((MeanDist1*(StandDivRadial1^2))/(MeanDist2*(StandDivRadial2^2)))*
+      exp(0.5*(((StandDivRadial2*Dist1)^2 - (StandDivRadial1*Dist2)^2)/(StandDivRadial1*StandDivRadial2)^2))
     
     RadDilation <- as.data.frame(cbind(x[,1:4],
                                        stretch*x$LAT,
@@ -165,8 +165,8 @@ TESTAngularStretch <- function(x, y) {
     StandDivRadial1 <- sd(atan(x$LAT/x$LON))
     StandDivRadial2 <- sd(atan(RadDilation$LAT/RadDilation$LON))
   
-    ScaleFactor <- ((MeanDist2*(StandDivRadial2^2))/(MeanDist1*(StandDivRadial1^2)))*
-        exp(0.5*(((StandDivRadial1*Dist2)^2 - (StandDivRadial2*Dist1)^2)/(StandDivRadial1*StandDivRadial2)^2))
+    ScaleFactor <- 1 - ((MeanDist1*(StandDivRadial1^2))/(MeanDist2*(StandDivRadial2^2)))*
+      exp(0.5*(((StandDivRadial2*Dist1)^2 - (StandDivRadial1*Dist2)^2)/(StandDivRadial1*StandDivRadial2)^2))
   
     AngStretch <- as.data.frame(cbind(x[,1:4],
                                     AngStretchLAT,
