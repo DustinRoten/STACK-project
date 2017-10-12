@@ -121,7 +121,7 @@ AngularStretch <- function(x, y) {
             
         } else if(x$theta[i] < MeanAngle) {
           
-            StretchedAngles[i] <- AngleStretch*abs(x$theta[i] - MeanAngle)
+            StretchedAngles[i] <- -1*AngleStretch*abs(x$theta[i] - MeanAngle)
           
         } else {StretchedAngles[i] <- x$theta[i]}
             
@@ -186,7 +186,7 @@ MRSMeasure <- function(w, x, y, z) {
 
     if(Dispersion[1,1] %% 4 == 0) {Day <- 366} else {Day <- 365}
           
-    MRSMeasureValue <- (((11100^2)*10000)/(Emissions/Day))*sum(abs(Model2_Matrix - Model1_Matrix))*100
+    MRSMeasureValue <- (1/sum(Model1_Matrix))*sum(abs(Model2_Matrix - Model1_Matrix))*100
 
     return(MRSMeasureValue)
   

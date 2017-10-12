@@ -19,7 +19,7 @@ Emissions <- 12591532084.8523
 
 DispersionAtOrigin <- ShiftToOrigin("S", Dispersion, PlantLAT, PlantLON)
 
-BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 0% complete... Beginning horizontal shift now.")
+#BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 0% complete... Beginning horizontal shift now.")
 
 ##### Horizontal Shift #####
 ShiftMetricValues <- data.frame()
@@ -99,7 +99,7 @@ ggsave("Shift-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, u
 
 ###################################################################################################################
 
-BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 25% complete... Beginning angular rotation now.")
+#BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 25% complete... Beginning angular rotation now.")
 
 ### Angular Rotation ###
 RotationMetricValues <- data.frame()
@@ -177,7 +177,7 @@ p <- ggplot(data = RotationMetricValues, aes(x = Factor, y = COM)) +
 
 ggsave("Rotation-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
-BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 50% complete... Beginning radial dilation now.")
+#BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 50% complete... Beginning radial dilation now.")
 
 ###################################################################################################################
 
@@ -257,7 +257,7 @@ p <- ggplot(data = RadialStretchMetricValues, aes(x = Factor, y = COM)) +
 
 ggsave("RadStretch-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
-BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 75% complete... Beginning angular stretch now.")
+#BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 75% complete... Beginning angular stretch now.")
 
 ###############################################################################################################
 
@@ -340,7 +340,7 @@ p <- ggplot(data = AngularStretchMetricValues, aes(x = Factor, y = COM)) +
 
 ggsave("AngStretch-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
-BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 100% complete... Beginning file transfer now.")
+#BossStatus("3366202544@cwwsms.com", "Sensitivity Graphs", "Your sensitivity plotting script is 100% complete... Beginning file transfer now.")
 
 ##### Moving files #####
 NAME <- c("Shift-COM-Calibration.jpg",
