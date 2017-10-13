@@ -17,8 +17,11 @@ Emissions <- 12591532084.8523
 
 DispersionAtOrigin <- ShiftToOrigin("S", Dispersion, PlantLAT, PlantLON)
 
-ShiftedMetricValues <- data.frame()
+#########################################################################################################################
+########## Shifted Dispersion ###########################################################################################
+#########################################################################################################################
 
+ShiftedMetricValues <- data.frame()
 for(i in 0:50) {
   
     Model1 <- DispersionAtOrigin
@@ -87,15 +90,23 @@ for(i in 0:50) {
     MeanAngle2 <- sum(na.omit(Angles2*Gridded_Model2$CO2))/sum(na.omit(Gridded_Model2$CO2))
     ShiftedMetricValues[i+1, 3] <- abs(MeanAngle1 - MeanAngle2)
     
-    StdAngle1 <- sqrt(sum(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2)/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
-    StdAngle2 <- sqrt(sum(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2)/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
+    StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
+    StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
     ShiftedMetricValues[i+1, 4] <- abs(StdAngle1 - StdAngle2)
 
     x1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LON))/sum(Gridded_Model1$CO2)
     y1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LAT))/sum(Gridded_Model1$CO2)
     x2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LON))/sum(Gridded_Model2$CO2)
     y2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LAT))/sum(Gridded_Model2$CO2)
-    ShiftedMetricValues[i+1, 5] <- abs(sqrt((x1-y1)^2 + (x2-y2)^2))
+    ShiftedMetricValues[i+1, 5] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2))
 }
 
 names(ShiftedMetricValues) <- c("ShiftFactor", "MetricValue", "MeanAngleValue", "StdAngleValue", "COM")
+
+plot(ShiftedMetricValues$MetricValue ~ ShiftedMetricValues$ShiftFactor)
+plot(ShiftedMetricValues$MeanAngleValue ~ ShiftedMetricValues$ShiftFactor)
+plot(ShiftedMetricValues$StdAngleValue ~ ShiftedMetricValues$ShiftFactor)
+plot(ShiftedMetricValues$COM ~ ShiftedMetricValues$ShiftFactor)
+#########################################################################################################################
+########## Rotated Dispersion ###########################################################################################
+#########################################################################################################################
