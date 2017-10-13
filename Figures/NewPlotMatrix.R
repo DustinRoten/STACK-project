@@ -173,7 +173,7 @@ for(i in 0:200) {
   
   ##### Metric Calculations Here #####
   
-  RotatededMetricValues[i+1, 1] <- i/10
+  RotatedMetricValues[i+1, 1] <- i/10
   
   RotatedMetricValues[i+1, 2] <- 0.5*(1/sum(na.omit(Gridded_Model1$CO2)))*sum(abs(Gridded_Model1$CO2 - Gridded_Model2$CO2))*100
   
