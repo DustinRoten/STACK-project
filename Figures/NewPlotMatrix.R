@@ -212,7 +212,7 @@ plot(RotatedMetricValues$COM ~ RotatedMetricValues$RotationFactor)
 #########################################################################################################################
 
 RadialMetricValues <- data.frame()
-for(i in 0:100) {
+for(i in 0:99) {
   
   Model1 <- DispersionAtOrigin
   
@@ -303,7 +303,7 @@ plot(RadialMetricValues$COM ~ RadialMetricValues$DilationFactor)
 #########################################################################################################################
 
 AngularMetricValues <- data.frame()
-for(i in 0:100) {
+for(i in 0:99) {
   
   Model1 <- DispersionAtOrigin
   
@@ -397,6 +397,7 @@ p <- ggplot(data = ShiftedMetricValues, aes(x = ShiftFactor, y = MetricValue)) +
   geom_line() +
   xlab("Horizontal Shift (Degrees)") +
   ylab("") +
+  ylim(0,max(max(1.01*ShiftedMetricValues$MetricValue), max(1.01*RotatedMetricValues$MetricValue), max(1.01*RadialMetricValues$MetricValue), max(1.01*AngularMetricValues$MetricValue) )) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -412,6 +413,7 @@ p <- ggplot(data = ShiftedMetricValues, aes(x = ShiftFactor, y = MeanAngleValue)
   geom_line() +
   xlab("Horizontal Shift (Degrees)") +
   ylab("") +
+  ylim(0, max(max(1.01*ShiftedMetricValues$MeanAngleValue), max(1.01*RotatedMetricValues$MeanAngleValue), max(1.01*RadialMetricValues$MeanAngleValue), max(1.01*AngularMetricValues$MeanAngleValue) )) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -427,6 +429,7 @@ p <- ggplot(data = ShiftedMetricValues, aes(x = ShiftFactor, y = StdAngleValue))
   geom_line() +
   xlab("Horizontal Shift (Degrees)") +
   ylab("") +
+  ylim(0, max(max(1.01*ShiftedMetricValues$StdAngleValue), max(1.01*RotatedMetricValues$StdAngleValue), max(1.01*RadialMetricValues$StdAngleValue), max(1.01*AngularMetricValues$StdAngleValue) )) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -442,6 +445,7 @@ p <- ggplot(data = ShiftedMetricValues, aes(x = ShiftFactor, y = COM)) +
   geom_line() +
   xlab("Horizontal Shift (Degrees)") +
   ylab("") +
+  ylim(0, max(max(1.01*ShiftedMetricValues$COM), max(1.01*RotatedMetricValues$COM), max(1.01*RadialMetricValues$COM), max(1.01*AngularMetricValues$COM) )) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
