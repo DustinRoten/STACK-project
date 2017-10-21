@@ -6,7 +6,7 @@ library(scales)
 library(ggmap)
 library(geosphere)
 #library(mailR)
-source("TEST-DEMOFunctions.R")
+source("DEMOFunctions.R")
 source("EmailFunction.R")
 
 # Read in file
@@ -89,25 +89,27 @@ for(i in 0:50) {
     ShiftedMetricValues[i+1, 1] <- i/10 # Shifts for translation
     
     ShiftedMetricValues[i+1, 2] <- 0.5*(1/sum(na.omit(Gridded_Model1$CO2)))*sum(abs(Gridded_Model1$CO2 - Gridded_Model2$CO2))*100 # MRS Measure
-    
-    Angles1 <- (180/pi)*atan2(Gridded_Model1$LAT, Gridded_Model1$LON)
-    MeanAngle1 <- sum(na.omit(Angles1*Gridded_Model1$CO2))/sum(na.omit(Gridded_Model1$CO2))
-    Angles2 <- (180/pi)*atan2(Gridded_Model2$LAT, Gridded_Model2$LON)
-    MeanAngle2 <- sum(na.omit(Angles2*Gridded_Model2$CO2))/sum(na.omit(Gridded_Model2$CO2))
-    ShiftedMetricValues[i+1, 3] <- abs(MeanAngle1 - MeanAngle2) # Mean Angle Measure
-    
-    StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
-    StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
-    ShiftedMetricValues[i+1, 4] <- abs(StdAngle1 - StdAngle2) # Std Dev Measure
 
     x1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LON))/sum(Gridded_Model1$CO2)
     y1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LAT))/sum(Gridded_Model1$CO2)
     x2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LON))/sum(Gridded_Model2$CO2)
     y2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LAT))/sum(Gridded_Model2$CO2)
-    ShiftedMetricValues[i+1, 5] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2)) # COM Measure
+    ShiftedMetricValues[i+1, 3] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2)) # COM Measure
+    
+    MeanAngle1 <- if((180/pi)*atan2(y1, x1) > 0) {(180/pi)*atan2(y1, x1)} else {360 + (180/pi)*atan2(y1, x1)}
+    MeanAngle2 <- if((180/pi)*atan2(y2, x2) > 0) {(180/pi)*atan2(y2, x2)} else {360 + (180/pi)*atan2(y2, x2)}
+    ShiftedMetricValues[i+1, 4] <- abs(MeanAngle1 - MeanAngle2) # Mean Angle Measure
+    
+    Angles1 <- (180/pi)*atan2(Gridded_Model1$LAT, Gridded_Model1$LON)
+    Angles2 <- (180/pi)*atan2(Gridded_Model2$LAT, Gridded_Model2$LON)
+    
+    StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
+    StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
+    ShiftedMetricValues[i+1, 5] <- abs(StdAngle1 - StdAngle2) # Std Dev Measure
+    
 }
 
-names(ShiftedMetricValues) <- c("ShiftFactor", "MetricValue", "MeanAngleValue", "StdAngleValue", "COM")
+names(ShiftedMetricValues) <- c("ShiftFactor", "MetricValue", "COM", "MeanAngleValue", "StdAngleValue")
 
 plot(ShiftedMetricValues$MetricValue ~ ShiftedMetricValues$ShiftFactor)
 plot(ShiftedMetricValues$MeanAngleValue ~ ShiftedMetricValues$ShiftFactor)
@@ -177,28 +179,30 @@ for(i in 0:200) {
   
   ##### Metric Calculations Here #####
   
-  RotatedMetricValues[i+1, 1] <- i/100
+  RotatedMetricValues[i+1, 1] <- i/10 # Shifts for translation
   
-  RotatedMetricValues[i+1, 2] <- 0.5*(1/sum(na.omit(Gridded_Model1$CO2)))*sum(abs(Gridded_Model1$CO2 - Gridded_Model2$CO2))*100
-  
-  Angles1 <- (180/pi)*atan2(Gridded_Model1$LAT, Gridded_Model1$LON)
-  MeanAngle1 <- sum(na.omit(Angles1*Gridded_Model1$CO2))/sum(na.omit(Gridded_Model1$CO2))
-  Angles2 <- (180/pi)*atan2(Gridded_Model2$LAT, Gridded_Model2$LON)
-  MeanAngle2 <- sum(na.omit(Angles2*Gridded_Model2$CO2))/sum(na.omit(Gridded_Model2$CO2))
-  RotatedMetricValues[i+1, 3] <- abs(MeanAngle1 - MeanAngle2)
-  
-  StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
-  StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
-  RotatedMetricValues[i+1, 4] <- abs(StdAngle1 - StdAngle2)
+  RotatedMetricValues[i+1, 2] <- 0.5*(1/sum(na.omit(Gridded_Model1$CO2)))*sum(abs(Gridded_Model1$CO2 - Gridded_Model2$CO2))*100 # MRS Measure
   
   x1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LON))/sum(Gridded_Model1$CO2)
   y1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LAT))/sum(Gridded_Model1$CO2)
   x2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LON))/sum(Gridded_Model2$CO2)
   y2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LAT))/sum(Gridded_Model2$CO2)
-  RotatedMetricValues[i+1, 5] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2))
+  RotatedMetricValues[i+1, 3] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2)) # COM Measure
+  
+  MeanAngle1 <- if((180/pi)*atan2(y1, x1) > 0) {(180/pi)*atan2(y1, x1)} else {360 + (180/pi)*atan2(y1, x1)}
+  MeanAngle2 <- if((180/pi)*atan2(y2, x2) > 0) {(180/pi)*atan2(y2, x2)} else {360 + (180/pi)*atan2(y2, x2)}
+  RotatedMetricValues[i+1, 4] <- abs(MeanAngle1 - MeanAngle2) # Mean Angle Measure
+  
+  Angles1 <- (180/pi)*atan2(Gridded_Model1$LAT, Gridded_Model1$LON)
+  Angles2 <- (180/pi)*atan2(Gridded_Model2$LAT, Gridded_Model2$LON)
+  
+  StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
+  StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
+  RotatedMetricValues[i+1, 5] <- abs(StdAngle1 - StdAngle2) # Std Dev Measure
+  
 }
 
-names(RotatedMetricValues) <- c("RotationFactor", "MetricValue", "MeanAngleValue", "StdAngleValue", "COM")
+names(RotatedMetricValues) <- c("RotationFactor", "MetricValue", "COM", "MeanAngleValue", "StdAngleValue")
 
 plot(RotatedMetricValues$MetricValue ~ RotatedMetricValues$RotationFactor)
 plot(RotatedMetricValues$MeanAngleValue ~ RotatedMetricValues$RotationFactor)
@@ -268,28 +272,30 @@ for(i in 0:99) {
   
   ##### Metric Calculations Here #####
   
-  RadialMetricValues[i+1, 1] <- 1 + i/100
+  RadialMetricValues[i+1, 1] <- i/10 # Shifts for translation
   
-  RadialMetricValues[i+1, 2] <- 0.5*(1/sum(na.omit(Gridded_Model1$CO2)))*sum(abs(Gridded_Model1$CO2 - Gridded_Model2$CO2))*100
-  
-  Angles1 <- (180/pi)*atan2(Gridded_Model1$LAT, Gridded_Model1$LON)
-  MeanAngle1 <- sum(na.omit(Angles1*Gridded_Model1$CO2))/sum(na.omit(Gridded_Model1$CO2))
-  Angles2 <- (180/pi)*atan2(Gridded_Model2$LAT, Gridded_Model2$LON)
-  MeanAngle2 <- sum(na.omit(Angles2*Gridded_Model2$CO2))/sum(na.omit(Gridded_Model2$CO2))
-  RadialMetricValues[i+1, 3] <- abs(MeanAngle1 - MeanAngle2)
-  
-  StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
-  StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
-  RadialMetricValues[i+1, 4] <- abs(StdAngle1 - StdAngle2)
+  RadialMetricValues[i+1, 2] <- 0.5*(1/sum(na.omit(Gridded_Model1$CO2)))*sum(abs(Gridded_Model1$CO2 - Gridded_Model2$CO2))*100 # MRS Measure
   
   x1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LON))/sum(Gridded_Model1$CO2)
   y1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LAT))/sum(Gridded_Model1$CO2)
   x2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LON))/sum(Gridded_Model2$CO2)
   y2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LAT))/sum(Gridded_Model2$CO2)
-  RadialMetricValues[i+1, 5] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2))
+  RadialMetricValues[i+1, 3] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2)) # COM Measure
+  
+  MeanAngle1 <- if((180/pi)*atan2(y1, x1) > 0) {(180/pi)*atan2(y1, x1)} else {360 + (180/pi)*atan2(y1, x1)}
+  MeanAngle2 <- if((180/pi)*atan2(y2, x2) > 0) {(180/pi)*atan2(y2, x2)} else {360 + (180/pi)*atan2(y2, x2)}
+  RadialMetricValues[i+1, 4] <- abs(MeanAngle1 - MeanAngle2) # Mean Angle Measure
+  
+  Angles1 <- (180/pi)*atan2(Gridded_Model1$LAT, Gridded_Model1$LON)
+  Angles2 <- (180/pi)*atan2(Gridded_Model2$LAT, Gridded_Model2$LON)
+  
+  StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
+  StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
+  RadialMetricValues[i+1, 5] <- abs(StdAngle1 - StdAngle2) # Std Dev Measure
+  
 }
 
-names(RadialMetricValues) <- c("DilationFactor", "MetricValue", "MeanAngleValue", "StdAngleValue", "COM")
+names(RadialMetricValues) <- c("DilationFactor", "MetricValue", "COM", "MeanAngleValue", "StdAngleValue")
 
 plot(RadialMetricValues$MetricValue ~ RadialMetricValues$DilationFactor)
 plot(RadialMetricValues$MeanAngleValue ~ RadialMetricValues$DilationFactor)
@@ -359,28 +365,30 @@ for(i in 0:99) {
   
   ##### Metric Calculations Here #####
   
-  AngularMetricValues[i+1, 1] <- 1 + i/100
+  AngularMetricValues[i+1, 1] <- i/10 # Shifts for translation
   
-  AngularMetricValues[i+1, 2] <- 0.5*(1/sum(na.omit(Gridded_Model1$CO2)))*sum(abs(Gridded_Model1$CO2 - Gridded_Model2$CO2))*100
-  
-  Angles1 <- (180/pi)*atan2(Gridded_Model1$LAT, Gridded_Model1$LON)
-  MeanAngle1 <- sum(na.omit(Angles1*Gridded_Model1$CO2))/sum(na.omit(Gridded_Model1$CO2))
-  Angles2 <- (180/pi)*atan2(Gridded_Model2$LAT, Gridded_Model2$LON)
-  MeanAngle2 <- sum(na.omit(Angles2*Gridded_Model2$CO2))/sum(na.omit(Gridded_Model2$CO2))
-  AngularMetricValues[i+1, 3] <- abs(MeanAngle1 - MeanAngle2)
-  
-  StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
-  StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
-  AngularMetricValues[i+1, 4] <- abs(StdAngle1 - StdAngle2)
+  AngularMetricValues[i+1, 2] <- 0.5*(1/sum(na.omit(Gridded_Model1$CO2)))*sum(abs(Gridded_Model1$CO2 - Gridded_Model2$CO2))*100 # MRS Measure
   
   x1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LON))/sum(Gridded_Model1$CO2)
   y1 <- sum(na.omit(Gridded_Model1$CO2*Gridded_Model1$LAT))/sum(Gridded_Model1$CO2)
   x2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LON))/sum(Gridded_Model2$CO2)
   y2 <- sum(na.omit(Gridded_Model2$CO2*Gridded_Model2$LAT))/sum(Gridded_Model2$CO2)
-  AngularMetricValues[i+1, 5] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2))
+  AngularMetricValues[i+1, 3] <- 111*abs(sqrt((x1-x2)^2 + (y1-y2)^2)) # COM Measure
+  
+  MeanAngle1 <- if((180/pi)*atan2(y1, x1) > 0) {(180/pi)*atan2(y1, x1)} else {360 + (180/pi)*atan2(y1, x1)}
+  MeanAngle2 <- if((180/pi)*atan2(y2, x2) > 0) {(180/pi)*atan2(y2, x2)} else {360 + (180/pi)*atan2(y2, x2)}
+  AngularMetricValues[i+1, 4] <- abs(MeanAngle1 - MeanAngle2) # Mean Angle Measure
+  
+  Angles1 <- (180/pi)*atan2(Gridded_Model1$LAT, Gridded_Model1$LON)
+  Angles2 <- (180/pi)*atan2(Gridded_Model2$LAT, Gridded_Model2$LON)
+  
+  StdAngle1 <- sqrt(sum(na.omit(Gridded_Model1$CO2*(Angles1 - MeanAngle1)^2))/sum(Gridded_Model1$CO2))*sqrt(nrow(na.omit(Gridded_Model1))/(nrow(na.omit(Gridded_Model1)) - 1))
+  StdAngle2 <- sqrt(sum(na.omit(Gridded_Model2$CO2*(Angles2 - MeanAngle2)^2))/sum(Gridded_Model2$CO2))*sqrt(nrow(na.omit(Gridded_Model2))/(nrow(na.omit(Gridded_Model2)) - 1))
+  AngularMetricValues[i+1, 5] <- abs(StdAngle1 - StdAngle2) # Std Dev Measure
+  
 }
 
-names(AngularMetricValues) <- c("DilationFactor", "MetricValue", "MeanAngleValue", "StdAngleValue", "COM")
+names(AngularMetricValues) <- c("DilationFactor", "MetricValue", "COM", "MeanAngleValue", "StdAngleValue")
 
 plot(AngularMetricValues$MetricValue ~ AngularMetricValues$DilationFactor)
 plot(AngularMetricValues$MeanAngleValue ~ AngularMetricValues$DilationFactor)
