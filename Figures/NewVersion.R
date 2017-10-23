@@ -54,6 +54,8 @@ for (i in 1:4) {
         eval(parse(text = paste(Metrics[i], "[j+1,1] <- MRS_Value", sep = "")))
         eval(parse(text = paste(Metrics[i], "[j+1,2] <- COM_Value", sep = "")))
         eval(parse(text = paste(Metrics[i], "[j+1,3] <- MeanAngle_Value", sep = "")))
+        
+        eval(parse(text = paste("names(", Metrics[i], ")", " <- ", "c('MRSValue', 'COMValue', 'MeanAngleValue')", sep = "")))
     
     } # End individual iterations here. Matrices 1 & 2 have been filled
     
