@@ -245,34 +245,25 @@ STDAngleMeasure <- function(x, y, a, b) {
 
 
 
-# Center of Mass Measurement
-COMMeasure <- function(w, x, y, a, b) {
-      
-    AtOrigin <- w
-    Model1 <- x
-    Model2 <- y
-    LAT <- a
-    LON <- b
-    
-    if(w == "T" | w == "t" | w == "TRUE" | w == "True" | w == "true" | w == TRUE) {
+# Weighted Center of Mass Measurement. Requires LAT, LON, CO2 columns.
+COMMeasure <- function(x, y) {
         
-        xx <- sum((111*Model1[,6])*Model1[,7])/sum(Model1[,7])
-        xy <- sum((111*Model1[,5])*Model1[,7])/sum(Model1[,7])
-        
-        yx <- sum((111*Model2[,6])*Model2[,7])/sum(Model2[,7])
-        yy <- sum((111*Model2[,5])*Model2[,7])/sum(Model2[,7])
-        
-    } else {
-    
-        xx <- sum((111*Model1[,6] - 111*b)*Model1[,7])/sum(Model1[,7])
-        xy <- sum((111*Model1[,5] - 111*a)*Model1[,7])/sum(Model1[,7])
-    
-        yx <- sum((111*Model2[,6] - 111*b)*Model2[,7])/sum(Model2[,7])
-        yy <- sum((111*Model2[,5] - 111*a)*Model2[,7])/sum(Model2[,7])
-    
-    }
+    x1 <- sum((x$LON)*x$CO2)/sum(x$LON)
+    y1 <- sum((x$LAT)*x$CO2)/sum(x$LAT)
+    x2 <- sum((y$LON)*y$CO2)/sum(y$LON)
+    y2 <- sum((y$LAT)*y$CO2)/sum(y$LAT)
           
-    return(sqrt((xx - yx)^2 + (yx - yy)^2))
+    return(sqrt((x1 - x2)^2 + (y1 - y2)^2))
+  
+}
+
+# Weighted angle to COM
+COMAngle <- function(x) {
+  
+    x1 <- sum((x$LON)*x$CO2)/sum(x$LON)
+    y1 <- sum((x$LAT)*x$CO2)/sum(x$LAT)
+    
+    angle <- if( (180/pi)*atan2(y1, x1) >= 0) {(180/pi)*atan2(y1, x1)} else {(180/pi)*atan2(y1, x1) + 360}
   
 }
 
