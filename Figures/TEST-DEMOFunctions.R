@@ -248,10 +248,10 @@ STDAngleMeasure <- function(x, y, a, b) {
 # Weighted Center of Mass Measurement. Requires LAT, LON, CO2 columns.
 COMMeasure <- function(x, y) {
         
-    x1 <- sum((x$LON)*x$CO2)/sum(x$LON)
-    y1 <- sum((x$LAT)*x$CO2)/sum(x$LAT)
-    x2 <- sum((y$LON)*y$CO2)/sum(y$LON)
-    y2 <- sum((y$LAT)*y$CO2)/sum(y$LAT)
+    x1 <- 111*sum((x$LON)*x$CO2)/sum(x$LON)
+    y1 <- 111*sum((x$LAT)*x$CO2)/sum(x$LAT)
+    x2 <- 111*sum((y$LON)*y$CO2)/sum(y$LON)
+    y2 <- 111*sum((y$LAT)*y$CO2)/sum(y$LAT)
           
     return(sqrt((x1 - x2)^2 + (y1 - y2)^2))
   

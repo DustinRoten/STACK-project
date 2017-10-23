@@ -20,7 +20,7 @@ Names_Metrics <- c("MRSMeasure", "MeanAngleMeasure", "STDAngleMeasure", "COMMeas
 # Create empty data frames to store metric values in
 for (a in 1:4) {
   
-    eval(parse(text = paste(Metrics[i], " <- ", "data.frame()", sep = "")))
+    eval(parse(text = paste(Metrics[a], " <- ", "data.frame()", sep = "")))
   
 }
 
