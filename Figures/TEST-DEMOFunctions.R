@@ -329,11 +329,12 @@ GridDispersions <- function(x, y, z) {
   
 }
 
+# Theta should be in radians
 RotateToAxis <- function(x, theta) {
   
     RotatedDispersion <- as.data.frame(cbind(
-                                           x$LON*sinpi(-1*theta) + x$LAT*cospi(-1*theta),
-                                           x$LON*cospi(-1*theta) - x$LAT*sinpi(-1*theta),
+                                           x$LON*(180/pi)*sin(-1*theta) + x$LAT*(180/pi)*cos(-1*theta),
+                                           x$LON*(180/pi)*cos(-1*theta) - x$LAT*(180/pi)*sin(-1*theta),
                                            x$CO2))
   
     names(RotatedDispersion) <- c("LAT", "LON", "CO2")

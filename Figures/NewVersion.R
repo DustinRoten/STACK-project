@@ -49,14 +49,13 @@ for (i in 1:4) {
         # Mean angle difference is calculated here
         Angle1 <- COMAngle(Melted_Matrix_Model1)
         Angle2 <- COMAngle(Melted_Matrix_Model2)
-        MeanAngle_Value <- if(abs(Angle1-Angle2) <= 180) {abs(Angle1 - Angle2)} else {360 - abs(Angle1 - Angle2)}
+        MeanAngle_Value <- if(abs(Angle1 - Angle2) <= 180) {abs(Angle1 - Angle2)} else {360 - abs(Angle1 - Angle2)}
         
         # Calculating the standard deviation of dispersion
         Rotated_Dispersion1 <- RotateToAxis(Melted_Matrix_Model1, Angle1)
         Rotated_Dispersion2 <- RotateToAxis(Melted_Matrix_Model2, Angle2)
-        
-        STDAngles1 <- sd((180/pi)*atan2(Melted_Matrix_Model1$LAT, Melted_Matrix_Model1$LON))
-        STDAngles2 <- sd((180/pi)*atan2(Melted_Matrix_Model2$LAT, Melted_Matrix_Model2$LAT))
+        STDAngles1 <- sd((180/pi)*atan2(Rotated_Dispersion1$LAT, Rotated_Dispersion1$LON))
+        STDAngles2 <- sd((180/pi)*atan2(Rotated_Dispersion2$LAT, Rotated_Dispersion2$LON))
         STDAngle_Value <- abs(STDAngles1-STDAngles2)
     
         eval(parse(text = paste(Metrics[i], "[j+1,1] <- MRS_Value", sep = "")))
