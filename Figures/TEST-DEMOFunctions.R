@@ -253,7 +253,7 @@ COMMeasure <- function(x, y) {
     x2 <- sum((y$LON)*y$CO2)/sum(y$LON)
     y2 <- sum((y$LAT)*y$CO2)/sum(y$LAT)
           
-    return(111*sqrt((x1 - x2)^2 + (y1 - y2)^2))
+    return(111000*sqrt((x1 - x2)^2 + (y1 - y2)^2))
   
 }
 

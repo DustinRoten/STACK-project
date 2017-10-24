@@ -4,8 +4,6 @@ source("TEST-DEMOFunctions.R")
 
 PlantLAT <- 39.28682
 PlantLON <- -96.1172
-Emissions <- 12591532084.8523
-Resolution <- 0.1
 
 Dispersion <- read.delim("JEC-10000m2.txt", header = TRUE, sep = "")
 Origin_Dispersion <- ShiftToOrigin("S", Dispersion, PlantLAT, PlantLON)
@@ -18,11 +16,7 @@ Metrics <- c("Metrics_ShiftedDispersion", "Metrics_RotatedDispersion", "Metrics_
 Names_Metrics <- c("MRSMeasure", "MeanAngleMeasure", "STDAngleMeasure", "COMMeasure")
 
 # Create empty data frames to store metric values in
-for (a in 1:4) {
-  
-    eval(parse(text = paste(Metrics[a], " <- ", "data.frame()", sep = "")))
-  
-}
+for (a in 1:4) {eval(parse(text = paste(Metrics[a], " <- ", "data.frame()", sep = "")))}
 
 # Run all 4 metrics here
 for (i in 1:4) {
@@ -67,8 +61,4 @@ for (i in 1:4) {
     
 }
 
-for (i in 1:4) {
-
-    eval(parse(text = paste("names(", Metrics[i], ")", " <- ", "c('MRSValue', 'COMValue', 'MeanAngleValue', 'STDAngleValue')", sep = "")))
-
-}
+for (i in 1:4) {eval(parse(text = paste("names(", Metrics[i], ")", " <- ", "c('MRSValue', 'COMValue', 'MeanAngleValue', 'STDAngleValue')", sep = "")))}
