@@ -265,6 +265,7 @@ COMAngle <- function(x) {
     
     angle <- if( (180/pi)*atan2(y1, x1) >= 0) {(180/pi)*atan2(y1, x1)} else {(180/pi)*atan2(y1, x1) + 360}
   
+    return(angle)
 }
 
 GridDispersions <- function(x, y, z) {

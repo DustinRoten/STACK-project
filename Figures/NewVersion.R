@@ -12,11 +12,11 @@ Scenarios <- c("ShiftDispersion", "RotateDispersion", "RadialDilation", "Angular
 Names_Scenarios <- c("ShiftedDispersion", "RotatedDispersion", "RadialStretchDispersion", "AngularStretchDispersion")
 NumOfRuns <- c(50, 200, 100, 100)
 
-Metrics <- c("Metrics_ShiftedDispersion", "Metrics_RotatedDispersion", "Metrics_RadialStretchDispersion", "Metrics_AngularStretchDispersion")
+MetricFrames <- c("Metrics_ShiftedDispersion", "Metrics_RotatedDispersion", "Metrics_RadialStretchDispersion", "Metrics_AngularStretchDispersion")
 Names_Metrics <- c("MRSMeasure", "MeanAngleMeasure", "STDAngleMeasure", "COMMeasure")
 
 # Create empty data frames to store metric values in
-for (a in 1:4) {eval(parse(text = paste(Metrics[a], " <- ", "data.frame()", sep = "")))}
+for (a in 1:4) {eval(parse(text = paste(MetricFrames[a], " <- ", "data.frame()", sep = "")))}
 
 # Run all 4 metrics here
 for (i in 1:4) {
@@ -52,13 +52,13 @@ for (i in 1:4) {
         STDAngles2 <- sd((180/pi)*atan2(Rotated_Dispersion2$LAT, Rotated_Dispersion2$LON))
         STDAngle_Value <- abs(STDAngles1-STDAngles2)
     
-        eval(parse(text = paste(Metrics[i], "[j+1,1] <- MRS_Value", sep = "")))
-        eval(parse(text = paste(Metrics[i], "[j+1,2] <- COM_Value", sep = "")))
-        eval(parse(text = paste(Metrics[i], "[j+1,3] <- MeanAngle_Value", sep = "")))
-        eval(parse(text = paste(Metrics[i], "[j+1,4] <- STDAngle_Value", sep = "")))
+        eval(parse(text = paste(MetricFrames[i], "[j+1,1] <- MRS_Value", sep = "")))
+        eval(parse(text = paste(MetricFrames[i], "[j+1,2] <- COM_Value", sep = "")))
+        eval(parse(text = paste(MetricFrames[i], "[j+1,3] <- MeanAngle_Value", sep = "")))
+        eval(parse(text = paste(MetricFrames[i], "[j+1,4] <- STDAngle_Value", sep = "")))
         
     } # End individual iterations here. Matrices 1 & 2 have been filled
     
 }
 
-for (i in 1:4) {eval(parse(text = paste("names(", Metrics[i], ")", " <- ", "c('MRSValue', 'COMValue', 'MeanAngleValue', 'STDAngleValue')", sep = "")))}
+for (i in 1:4) {eval(parse(text = paste("names(", MetricFrames[i], ")", " <- ", "c('MRSValue', 'COMValue', 'MeanAngleValue', 'STDAngleValue')", sep = "")))}
