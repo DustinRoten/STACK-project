@@ -12,15 +12,15 @@ ShiftToOrigin <- function(w, x, y, z) {
   
     if(w == "Shift" | w == "SHIFT" | w == "S") {
   
-        x[,5] <- x[,5] - y
-        x[,6] <- x[,6] - z
+        x$LAT <- x$LAT - y
+        x$LON <- x$LON - z
 
     }
   
     else if(w == "Undo" | w == "UNDO" | w == "U") {
     
-        x[,5] <- x[,5] + y
-        x[,6] <- x[,6] + z 
+        x$LAT <- x$LAT + y
+        x$LON <- x$LON + z 
     
     } else {print("ERROR!")}
   
@@ -270,44 +270,44 @@ COMAngle <- function(x) {
 
 GridDispersions <- function(x, y, z) {
   
-  x_range <- max( max(x$LON), max(y$LON) ) - min( min(x$LON), min(y$LON) ) + 1
-  y_range <- max( max(x$LAT), max(y$LAT) ) - min( min(x$LAT), min(y$LAT) ) + 1
+    x_range <- max( max(x$LON), max(y$LON) ) - min( min(x$LON), min(y$LON) ) + 1
+    y_range <- max( max(x$LAT), max(y$LAT) ) - min( min(x$LAT), min(y$LAT) ) + 1
   
-  # Translate the area into the number of grid cells based on the Resolution required.
-  x_steps <- round(x_range/Resolution, 0)
-  y_steps <- round(y_range/Resolution, 0)
+    # Translate the area into the number of grid cells based on the Resolution required.
+    x_steps <- round(x_range/Resolution, 0)
+    y_steps <- round(y_range/Resolution, 0)
   
-  # Set up 2 matrices to store values in
-  Model1_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
-  Model2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
+    # Set up 2 matrices to store values in
+    Model1_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
+    Model2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
   
-  # These values are going to be used in interations to define the bounds of each grid cell
-  minLON <- min(min(x$LON), min(y$LON))
-  minLAT <- min(min(x$LAT), min(y$LAT))
+    # These values are going to be used in interations to define the bounds of each grid cell
+    minLON <- min(min(x$LON), min(y$LON))
+    minLAT <- min(min(x$LAT), min(y$LAT))
   
-  # Grid the dispersions
-  for (g in 1:y_steps) {
+    # Grid the dispersions
+    for (g in 1:y_steps) {
     
-    for(h in 1:x_steps) {
+        for(h in 1:x_steps) {
       
-      CellAveragedPollutant_1 <- mean(x[,7][x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
+            CellAveragedPollutant_1 <- mean(x[,7][x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
                                                    x$LAT >= minLAT + Resolution*(g-1) & x$LAT < minLAT + Resolution*g])
       
-      CellAveragedPollutant_2 <- mean(y[,7][y$LON >= minLON + Resolution*(h-1) & y$LON < minLON + Resolution*h &
+            CellAveragedPollutant_2 <- mean(y[,7][y$LON >= minLON + Resolution*(h-1) & y$LON < minLON + Resolution*h &
                                                    y$LAT >= minLAT + Resolution*(g-1) & y$LAT < minLAT + Resolution*g])
       
-      Model1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
-      Model2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
+            Model1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
+            Model2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
       
+        }
     }
-  }
   
   # Melt the matrices for easier plotting
-  Gridded_Model1 <- melt(Model1_Matrix)
-  Gridded_Model2 <- melt(Model2_Matrix)
+  # Gridded_Model1 <- melt(Model1_Matrix)
+  # Gridded_Model2 <- melt(Model2_Matrix)
   
-  names(Gridded_Model1) <- c("LAT", "LON", "CO2")
-  names(Gridded_Model2) <- c("LAT", "LON", "CO2")
+  # names(Gridded_Model1) <- c("LAT", "LON", "CO2")
+  # names(Gridded_Model2) <- c("LAT", "LON", "CO2")
   
   if (z == 1) {return(Model1_Matrix)} else if (z == 2) {return(Model2_Matrix)} else {return(print("ERROR!"))}
   
