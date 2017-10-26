@@ -344,10 +344,10 @@ RotateToAxis <- function(x, theta) {
   
 }
 
-LocateOrigin <- function(x, y, z) {
+LocateOrigin <- function(x, Resolution) {
   
-    x_range <- max( max(x$LON), max(y$LON) ) - min( min(x$LON), min(y$LON) ) + 1
-    y_range <- max( max(x$LAT), max(y$LAT) ) - min( min(x$LAT), min(y$LAT) ) + 1
+    x_range <- max(x$LON) - min(x$LON) + 1
+    y_range <- max(x$LAT) - min(x$LAT) + 1
   
     # Translate the area into the number of grid cells based on the Resolution required.
     x_steps <- round(x_range/Resolution, 0)
@@ -358,36 +358,24 @@ LocateOrigin <- function(x, y, z) {
     Model2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
   
     # These values are going to be used in interations to define the bounds of each grid cell
-    minLON <- min(min(x$LON), min(y$LON))
-    minLAT <- min(min(x$LAT), min(y$LAT))
+    minLON <- min(x$LON)
+    minLAT <- min(x$LAT)
   
     # Grid the dispersions
     for (g in 1:y_steps) {
     
         for(h in 1:x_steps) {
       
-            CellAveragedPollutant_1 <- subset(x, x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
-                                                  x$LAT >= minLAT + Resolution*(g-1) & x$LAT < minLAT + Resolution*g)
+            CellAveragedPollutant <- subset(x, x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
+                                                x$LAT >= minLAT + Resolution*(g-1) & x$LAT < minLAT + Resolution*g)
       
-            CellAveragedPollutant_2 <- subset(y, y$LON >= minLON + Resolution*(h-1) & y$LON < minLON + Resolution*h &
-                                                  y$LAT >= minLAT + Resolution*(g-1) & y$LAT < minLAT + Resolution*g)
-      
-            if (min(CellAveragedPollutant_1$LON) < 0 & max(CellAveragedPollutant_1$LON) > 0 &
-                min(CellAveragedPollutant_1$LAT < 0 & max(CellAveragedPollutant_1$LAT))) {
-            
-                Origins <- c(g,h)
-                
-                else if(min(CellAveragedPollutant_2$LON) < 0 & max(CellAveragedPollutant_2$LON) > 0 &
-                        min(CellAveragedPollutant_2$LAT < 0 & max(CellAveragedPollutant_2$LAT))) {
-                  
-                    Origins <- c(g,h)
-                  
-                } else {}
-              
-            }
-        }
+        if(dim(CellAveragedPollutant)[1] != 0) {
+        
+            test <- c(g,h)
+        
+        } else {}
+      }
     }
-  
-    return(Origins)
 
+    return(test)
 }

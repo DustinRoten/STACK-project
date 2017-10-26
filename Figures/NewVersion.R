@@ -8,8 +8,8 @@ PlantLON <- -96.1172
 Dispersion <- read.delim("JEC-10000m2.txt", header = TRUE, sep = "")
 Origin_Dispersion <- ShiftToOrigin("S", Dispersion, PlantLAT, PlantLON)
 
-Scenarios <- c("ShiftDispersion", "RotateDispersion", "RadialDilation", "AngularStretch")
-Names_Scenarios <- c("ShiftedDispersion", "RotatedDispersion", "RadialStretchDispersion", "AngularStretchDispersion")
+Functions <- c("ShiftDispersion", "RotateDispersion", "RadialDilation", "AngularStretch")
+Scenarios <- c("ShiftedDispersion", "RotatedDispersion", "RadialStretchDispersion", "AngularStretchDispersion")
 NumOfRuns <- c(50, 200, 100, 100)
 
 MetricFrames <- c("Metrics_ShiftedDispersion", "Metrics_RotatedDispersion", "Metrics_RadialStretchDispersion", "Metrics_AngularStretchDispersion")
@@ -23,10 +23,10 @@ for (i in 1:4) {
   
     for (j in 0:NumOfRuns[i]) { # Begin individual iterations here. Matrices 1 & 2 are filled
           
-        eval(parse(text = paste(Names_Scenarios[i], " <- ", Scenarios[i], "(Origin_Dispersion,", j, ")")))
+        eval(parse(text = paste(Scenarios[i], " <- ", Functions[i], "(Origin_Dispersion,", j, ")")))
             
-        eval(parse(text = paste("Matrix_Model1 <- GridDispersions(Origin_Dispersion, ", Names_Scenarios[i], ", 1)", sep = "")))
-        eval(parse(text = paste("Matrix_Model2 <- GridDispersions(Origin_Dispersion, ", Names_Scenarios[i], ", 2)", sep = "")))
+        eval(parse(text = paste("Matrix_Model1 <- GridDispersions(Origin_Dispersion, ", Scenarios[i], ", 1)", sep = "")))
+        eval(parse(text = paste("Matrix_Model2 <- GridDispersions(Origin_Dispersion, ", Scenarios[i], ", 2)", sep = "")))
     
         # Both matrices are reformatted here
         Melted_Matrix_Model1 <- melt(Matrix_Model1)
