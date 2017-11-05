@@ -260,8 +260,8 @@ COMMeasure <- function(x, y) {
 # Weighted angle to COM
 COMAngle <- function(x) {
   
-    x1 <- sum((x$LON)*x$CO2)/sum(x$LON)
-    y1 <- sum((x$LAT)*x$CO2)/sum(x$LAT)
+    x1 <- sum((x$LON)*x$CO2)/sum(x$CO2)
+    y1 <- sum((x$LAT)*x$CO2)/sum(x$CO2)
     
     angle <- if( (180/pi)*atan2(y1, x1) >= 0) {(180/pi)*atan2(y1, x1)} else {(180/pi)*atan2(y1, x1) + 360}
   
@@ -344,10 +344,10 @@ RotateToAxis <- function(x, theta) {
   
 }
 
-LocateOrigin <- function(x, Resolution) {
+GridDispersions2 <- function(x, y, Resolution, z) {
   
-    x_range <- max(x$LON) - min(x$LON) + 1
-    y_range <- max(x$LAT) - min(x$LAT) + 1
+    x_range <- max( max(x$LON), max(y$LON) ) - min( min(x$LON), min(y$LON) ) + 1
+    y_range <- max( max(x$LAT), max(y$LAT) ) - min( min(x$LAT), min(y$LAT) ) + 1
   
     # Translate the area into the number of grid cells based on the Resolution required.
     x_steps <- round(x_range/Resolution, 0)
@@ -358,24 +358,41 @@ LocateOrigin <- function(x, Resolution) {
     Model2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
   
     # These values are going to be used in interations to define the bounds of each grid cell
-    minLON <- min(x$LON)
-    minLAT <- min(x$LAT)
+    minLON <- min(min(x$LON), min(y$LON))
+    minLAT <- min(min(x$LAT), min(y$LAT))
   
     # Grid the dispersions
     for (g in 1:y_steps) {
     
-        for(h in 1:x_steps) {
+          for(h in 1:x_steps) {
       
-            CellAveragedPollutant <- subset(x, x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
-                                                x$LAT >= minLAT + Resolution*(g-1) & x$LAT < minLAT + Resolution*g)
+          CellAveragedPollutant_1 <- mean(x[,7][x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
+                                                x$LAT >= minLAT + Resolution*(g-1) & x$LAT < minLAT + Resolution*g])
       
-        if(dim(CellAveragedPollutant)[1] != 0) {
-        
-            test <- c(g,h)
-        
-        } else {}
-      }
+          CellAveragedPollutant_2 <- mean(y[,7][y$LON >= minLON + Resolution*(h-1) & y$LON < minLON + Resolution*h &
+                                                y$LAT >= minLAT + Resolution*(g-1) & y$LAT < minLAT + Resolution*g])
+          
+          OriginCheck <- subset(x, x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
+                                  x$LAT >= minLAT + Resolution*(g-1) & x$LAT < minLAT + Resolution*g)
+          
+          if(dim(OriginCheck)[1] != 0) {
+            
+              if(min(abs(OriginCheck$LAT)) == min(abs(x$LAT)) & min(abs(OriginCheck$LON)) == min(abs(x$LON))) {
+                
+                  Origin <- c(g,h)
+                  
+              } else {}
+            
+          } else {}
+      
+          Model1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
+          Model2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
+      
+        }
     }
-
-    return(test)
+  
+    if (z == 1) {return(Model1_Matrix)}
+    else if (z == 2) {return(Model2_Matrix)}
+    else if (z == "O") {return(Origin <- Origin)}
+    
 }
