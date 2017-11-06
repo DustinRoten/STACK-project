@@ -1,5 +1,5 @@
 # Dustin Roten 11/05/2017
-# This script is responsible for metrics for the shifted dispersion scenario ONLY.
+# This script is responsible for metrics for the increased angular dispersion scenario ONLY.
 
 # Load required libraries
 library(ggplot2)
@@ -25,38 +25,38 @@ COMMeasure = NULL
 AngleMeasure = NULL
 STDAngleMeasure = NULL
 
-for(i in 0:50) {
+for(i in 0:200) {
 
-    Shifted_Dispersion <- ShiftDispersion(Origin_Dispersion, i)
+    Angular_Dispersion <- AngularDilation(Origin_Dispersion, i)
     
-    Matrix_Origin_Dispersion <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, 0.1, 1)
-    Matrix_Shifted_Dispersion <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, 0.1, 2)
-    Origin <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, 0.1, "O")
+    Matrix_Origin_Dispersion <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, 0.1, 1)
+    Matrix_Angular_Dispersion <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, 0.1, 2)
+    Origin <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, 0.1, "O")
     
-    Matrix_Shifted_Dispersion <- Matrix_Shifted_Dispersion*(sum(Matrix_Origin_Dispersion)/sum(Matrix_Shifted_Dispersion))
+    Matrix_Angular_Dispersion <- Matrix_Angular_Dispersion*(sum(Matrix_Origin_Dispersion)/sum(Matrix_Angular_Dispersion))
     
-    MRSMeasure[i+1] <- (1/(2*sum(Matrix_Origin_Dispersion)))*sum(abs(Matrix_Origin_Dispersion - Matrix_Shifted_Dispersion))*100
+    MRSMeasure[i+1] <- (1/(2*sum(Matrix_Origin_Dispersion)))*sum(abs(Matrix_Origin_Dispersion - Matrix_Angular_Dispersion))*100
     
     # "Spatial" Matrices
     Melted_Origin_Dispersion <- melt(Matrix_Origin_Dispersion)
-    Melted_Shifted_Dispersion <- melt(Matrix_Shifted_Dispersion)
+    Melted_Angular_Dispersion <- melt(Matrix_Angular_Dispersion)
     
     Melted_Origin_Dispersion <- subset(Melted_Origin_Dispersion, Melted_Origin_Dispersion$value != 0)
-    Melted_Shifted_Dispersion <- subset(Melted_Shifted_Dispersion, Melted_Shifted_Dispersion$value != 0)
+    Melted_Angular_Dispersion <- subset(Melted_Angular_Dispersion, Melted_Angular_Dispersion$value != 0)
     
     Melted_Origin_Dispersion$X1 <- Melted_Origin_Dispersion$X1 - Origin[1]
     Melted_Origin_Dispersion$X2 <- Melted_Origin_Dispersion$X2 - Origin[2]
-    Melted_Shifted_Dispersion$X1 <- Melted_Shifted_Dispersion$X1 - Origin[1]
-    Melted_Shifted_Dispersion$X2 <- Melted_Shifted_Dispersion$X2 - Origin[2]
+    Melted_Angular_Dispersion$X1 <- Melted_Angular_Dispersion$X1 - Origin[1]
+    Melted_Angular_Dispersion$X2 <- Melted_Angular_Dispersion$X2 - Origin[2]
     
     names(Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
-    names(Melted_Shifted_Dispersion) <- c("Y", "X", "CO2")
+    names(Melted_Angular_Dispersion) <- c("Y", "X", "CO2")
     
     # Center of Mass Calculation
     x1 <- sum(Melted_Origin_Dispersion$X * Melted_Origin_Dispersion$CO2)/sum(Melted_Origin_Dispersion$CO2)
     y1 <- sum(Melted_Origin_Dispersion$Y * Melted_Origin_Dispersion$CO2)/sum(Melted_Origin_Dispersion$CO2)
-    x2 <- sum(Melted_Shifted_Dispersion$X * Melted_Shifted_Dispersion$CO2)/sum(Melted_Shifted_Dispersion$CO2)
-    y2 <- sum(Melted_Shifted_Dispersion$Y * Melted_Shifted_Dispersion$CO2)/sum(Melted_Shifted_Dispersion$CO2)
+    x2 <- sum(Melted_Angular_Dispersion$X * Melted_Angular_Dispersion$CO2)/sum(Melted_Angular_Dispersion$CO2)
+    y2 <- sum(Melted_Angular_Dispersion$Y * Melted_Angular_Dispersion$CO2)/sum(Melted_Angular_Dispersion$CO2)
     
     COMMeasure[i+1] <- 111*0.1*sqrt((x2 - x1)^2 + (y2 - y1)^2)
     
@@ -68,39 +68,39 @@ for(i in 0:50) {
     
     # Standard Deviation Calculation
     NormalizedAxis_Melted_Origin_Dispersion <- data.frame(
-      Melted_Origin_Dispersion$X*sin(-Angle1*pi/180) + Melted_Origin_Dispersion$Y*cos(-Angle1*pi/180),
-      Melted_Origin_Dispersion$X*cos(-Angle1*pi/180) - Melted_Origin_Dispersion$Y*sin(-Angle1*pi/180),
-      Melted_Origin_Dispersion$CO2
-    )
+        Melted_Origin_Dispersion$X*sin(-Angle1*pi/180) + Melted_Origin_Dispersion$Y*cos(-Angle1*pi/180),
+        Melted_Origin_Dispersion$X*cos(-Angle1*pi/180) - Melted_Origin_Dispersion$Y*sin(-Angle1*pi/180),
+        Melted_Origin_Dispersion$CO2
+        )
     names(NormalizedAxis_Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
     
-    NormalizedAxis_Melted_Rotated_Dispersion <- data.frame(
-      Melted_Rotated_Dispersion$X*sin(-Angle2*pi/180) + Melted_Rotated_Dispersion$Y*cos(-Angle2*pi/180),
-      Melted_Rotated_Dispersion$X*cos(-Angle2*pi/180) - Melted_Rotated_Dispersion$Y*sin(-Angle2*pi/180),
-      Melted_Rotated_Dispersion$CO2
+    NormalizedAxis_Melted_Angular_Dispersion <- data.frame(
+      Melted_Angular_Dispersion$X*sin(-Angle2*pi/180) + Melted_Angular_Dispersion$Y*cos(-Angle2*pi/180),
+      Melted_Angular_Dispersion$X*cos(-Angle2*pi/180) - Melted_Angular_Dispersion$Y*sin(-Angle2*pi/180),
+      Melted_Angular_Dispersion$CO2
     )
-    names(NormalizedAxis_Melted_Rotated_Dispersion) <- c("Y", "X", "CO2")
+    names(NormalizedAxis_Melted_Angular_Dispersion) <- c("Y", "X", "CO2")
     
     STDAngle1 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Origin_Dispersion$Y, NormalizedAxis_Melted_Origin_Dispersion$X))
-    STDAngle2 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Rotated_Dispersion$Y, NormalizedAxis_Melted_Rotated_Dispersion$X))
+    STDAngle2 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Angular_Dispersion$Y, NormalizedAxis_Melted_Angular_Dispersion$X))
     
     STDAngleMeasure[i+1] <- abs(STDAngle1 - STDAngle2)
       
 }
 
-Metrics_Shift <- data.frame(c(0:50)/10, MRSMeasure, COMMeasure, AngleMeasure, STDAngleMeasure)
-names(Metrics_Shift) <- c("ShiftDegree", "MRS_Measure", "COM_Measure", "MeanAngle_Measure", "STDAngle_Measure")
+Metrics_Angular <- data.frame(c(0:100)/100 + 1, MRSMeasure, COMMeasure, AngleMeasure, STDAngleMeasure)
+names(Metrics_Angular) <- c("ShiftDegree", "MRS_Measure", "COM_Measure", "MeanAngle_Measure", "STDAngle_Measure")
 
 #####################################
 ##### Plots are Generated Below #####
 #####################################
 
-### Plot 1: Shift Metric, MRS ###
-p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = MRS_Measure)) +
+### Plot 1: Angular Metric, MRS ###
+p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = MRS_Measure)) +
   geom_line() +
-  xlab("Horizontal Shift (Degrees)") +
+  xlab("Dilation Factor") +
   ylab("") +
-  #ylim(0, max(max(1.01*ShiftedMetricValues$MetricValue), max(1.01*RotatedMetricValues$MetricValue), max(1.01*RadialMetricValues$MetricValue), max(1.01*AngularMetricValues$MetricValue) )) +
+  #ylim(0, max(max(1.01*ShiftedMetricValues$MetricValue), max(1.01*RotatedMetricValues$MetricValue), max(1.01*AngularMetricValues$MetricValue), max(1.01*AngularMetricValues$MetricValue) )) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -108,15 +108,15 @@ p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = MRS_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Angular-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
-### Plot 2: Shift Metric, MeanAngle ###
-p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = MeanAngle_Measure)) +
+### Plot 2: Angular Metric, MeanAngle ###
+p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = MeanAngle_Measure)) +
   geom_line() +
-  xlab("Horizontal Shift (Degrees)") +
+  xlab("Dilation Factor") +
   ylab("") +
-  #ylim(0, max(max(1.01*ShiftedMetricValues$MeanAngleValue), max(1.01*RotatedMetricValues$MeanAngleValue), max(1.01*RadialMetricValues$MeanAngleValue), max(1.01*AngularMetricValues$MeanAngleValue) )) +
+  #ylim(0, max(max(1.01*ShiftedMetricValues$MeanAngleValue), max(1.01*RotatedMetricValues$MeanAngleValue), max(1.01*AngularMetricValues$MeanAngleValue), max(1.01*AngularMetricValues$MeanAngleValue) )) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -124,15 +124,15 @@ p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = MeanAngle_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Angular-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
-### Plot 3: Shift Metric, STDAngle ###
-p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = STDAngle_Measure)) +
+### Plot 3: Angular Metric, STDAngle ###
+p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = STDAngle_Measure)) +
   geom_line() +
-  xlab("Horizontal Shift (Degrees)") +
+  xlab("Dilation Factor") +
   ylab("") +
-  #ylim(0, max(max(1.01*ShiftedMetricValues$StdAngleValue), max(1.01*RotatedMetricValues$StdAngleValue), max(1.01*RadialMetricValues$StdAngleValue), max(1.01*AngularMetricValues$StdAngleValue) )) +
+  #ylim(0, max(max(1.01*ShiftedMetricValues$StdAngleValue), max(1.01*RotatedMetricValues$StdAngleValue), max(1.01*AngularMetricValues$StdAngleValue), max(1.01*AngularMetricValues$StdAngleValue) )) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -140,15 +140,15 @@ p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = STDAngle_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Angular-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
-### Plot 4: Shift Metric, COM ###
-p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = COM_Measure)) +
+### Plot 4: Angular Metric, COM ###
+p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = COM_Measure)) +
   geom_line() +
-  xlab("Horizontal Shift (Degrees)") +
+  xlab("Dilation Factor") +
   ylab("") +
-  #ylim(0, max(max(1.01*ShiftedMetricValues$COM), max(1.01*RotatedMetricValues$COM), max(1.01*RadialMetricValues$COM), max(1.01*AngularMetricValues$COM) )) +
+  #ylim(0, max(max(1.01*ShiftedMetricValues$COM), max(1.01*RotatedMetricValues$COM), max(1.01*AngularMetricValues$COM), max(1.01*AngularMetricValues$COM) )) +
   theme_bw() +
   theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
   theme(plot.title = element_text(size = 40, face = "bold")) +
@@ -156,5 +156,5 @@ p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = COM_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Angular-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 

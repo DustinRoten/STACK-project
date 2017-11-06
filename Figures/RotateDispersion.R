@@ -68,15 +68,15 @@ for(i in 0:200) {
     
     # Standard Deviation Calculation
     NormalizedAxis_Melted_Origin_Dispersion <- data.frame(
-        Melted_Origin_Dispersion$X*sin(Angle1*pi/180) + Melted_Origin_Dispersion$Y*cos(Angle1*pi/180),
-        Melted_Origin_Dispersion$X*cos(Angle1*pi/180) - Melted_Origin_Dispersion$Y*sin(Angle1*pi/180),
+        Melted_Origin_Dispersion$X*sin(-Angle1*pi/180) + Melted_Origin_Dispersion$Y*cos(-Angle1*pi/180),
+        Melted_Origin_Dispersion$X*cos(-Angle1*pi/180) - Melted_Origin_Dispersion$Y*sin(-Angle1*pi/180),
         Melted_Origin_Dispersion$CO2
         )
     names(NormalizedAxis_Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
     
     NormalizedAxis_Melted_Rotated_Dispersion <- data.frame(
-      Melted_Rotated_Dispersion$X*sin(Angle2*pi/180) + Melted_Rotated_Dispersion$Y*cos(Angle2*pi/180),
-      Melted_Rotated_Dispersion$X*cos(Angle2*pi/180) - Melted_Rotated_Dispersion$Y*sin(Angle2*pi/180),
+      Melted_Rotated_Dispersion$X*sin(-Angle2*pi/180) + Melted_Rotated_Dispersion$Y*cos(-Angle2*pi/180),
+      Melted_Rotated_Dispersion$X*cos(-Angle2*pi/180) - Melted_Rotated_Dispersion$Y*sin(-Angle2*pi/180),
       Melted_Rotated_Dispersion$CO2
     )
     names(NormalizedAxis_Melted_Rotated_Dispersion) <- c("Y", "X", "CO2")
