@@ -1,4 +1,4 @@
-# Dustin Roten
+# Dustin Roten 11/05/2017
 # This script is responsible for metrics for the shifted dispersion scenario ONLY.
 
 # Load required libraries
@@ -67,8 +67,22 @@ for(i in 0:200) {
     AngleMeasure[i+1] <- if(abs(Angle1 - Angle2) > 180) {360 - abs(Angle1 - Angle2)} else {abs(Angle1 - Angle2)}
     
     # Standard Deviation Calculation
-    STDAngle1 <- sd((180/pi)*atan2(Melted_Origin_Dispersion$Y, Melted_Origin_Dispersion$X))
-    STDAngle2 <- sd((180/pi)*atan2(Melted_Rotated_Dispersion$Y, Melted_Rotated_Dispersion$X))
+    NormalizedAxis_Melted_Origin_Dispersion <- data.frame(
+        Melted_Origin_Dispersion$X*sin(Angle1*pi/180) + Melted_Origin_Dispersion$Y*cos(Angle1*pi/180),
+        Melted_Origin_Dispersion$X*cos(Angle1*pi/180) - Melted_Origin_Dispersion$Y*sin(Angle1*pi/180),
+        Melted_Origin_Dispersion$CO2
+        )
+    names(NormalizedAxis_Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
+    
+    NormalizedAxis_Melted_Rotated_Dispersion <- data.frame(
+      Melted_Rotated_Dispersion$X*sin(Angle2*pi/180) + Melted_Rotated_Dispersion$Y*cos(Angle2*pi/180),
+      Melted_Rotated_Dispersion$X*cos(Angle2*pi/180) - Melted_Rotated_Dispersion$Y*sin(Angle2*pi/180),
+      Melted_Rotated_Dispersion$CO2
+    )
+    names(NormalizedAxis_Melted_Rotated_Dispersion) <- c("Y", "X", "CO2")
+    
+    STDAngle1 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Origin_Dispersion$Y, NormalizedAxis_Melted_Origin_Dispersion$X))
+    STDAngle2 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Rotated_Dispersion$Y, NormalizedAxis_Melted_Rotated_Dispersion$X))
     
     STDAngleMeasure[i+1] <- abs(STDAngle1 - STDAngle2)
       
@@ -94,7 +108,7 @@ p <- ggplot(data = Metrics_Rotate, aes(x = ShiftDegree, y = MRS_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Rotate-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 2: Rotate Metric, MeanAngle ###
@@ -110,7 +124,7 @@ p <- ggplot(data = Metrics_Rotate, aes(x = ShiftDegree, y = MeanAngle_Measure)) 
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Rotate-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 3: Rotate Metric, STDAngle ###
@@ -126,7 +140,7 @@ p <- ggplot(data = Metrics_Rotate, aes(x = ShiftDegree, y = STDAngle_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Rotate-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 4: Rotate Metric, COM ###
@@ -142,5 +156,5 @@ p <- ggplot(data = Metrics_Rotate, aes(x = ShiftDegree, y = COM_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Rotate-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 

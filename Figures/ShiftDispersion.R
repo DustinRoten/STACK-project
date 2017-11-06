@@ -1,4 +1,4 @@
-# Dustin Roten
+# Dustin Roten 11/05/2017
 # This script is responsible for metrics for the shifted dispersion scenario ONLY.
 
 # Load required libraries
@@ -67,6 +67,20 @@ for(i in 0:50) {
     AngleMeasure[i+1] <- if(abs(Angle1 - Angle2) > 180) {360 - abs(Angle1 - Angle2)} else {abs(Angle1 - Angle2)}
     
     # Standard Deviation Calculation
+    Vector_Angles1 <- (180/pi)*atan2(Melted_Origin_Dispersion$Y, Melted_Origin_Dispersion$X)
+    Vector_Angles2 <- (180/pi)*atan2(Melted_Shifted_Dispersion$Y, Melted_Shifted_Dispersion$X)
+    
+    Vector_Angles1_NegSubset <- subset(Vector_Angles1, Vector_Angles1 < 0)
+    Vector_Angles1_PosSubset <- subset(Vector_Angles1, Vector_Angles1 >= 0)
+    Vector_Angles1_NegSubset <- Vector_Angles1_NegSubset + 360
+    Vector_Angles1 <- c(Vector_Angles1_PosSubset, Vector_Angles1_NegSubset)
+    
+    Vector_Angles2_NegSubset <- subset(Vector_Angles2, Vector_Angles2 < 0)
+    Vector_Angles2_PosSubset <- subset(Vector_Angles2, Vector_Angles2 >= 0)
+    Vector_Angles2_NegSubset <- Vector_Angles2_NegSubset + 360
+    Vector_Angles2 <- c(Vector_Angles2_PosSubset, Vector_Angles2_NegSubset)
+    
+    
     STDAngle1 <- sd((180/pi)*atan2(Melted_Origin_Dispersion$Y, Melted_Origin_Dispersion$X))
     STDAngle2 <- sd((180/pi)*atan2(Melted_Shifted_Dispersion$Y, Melted_Shifted_Dispersion$X))
     
