@@ -74,15 +74,15 @@ for(i in 0:50) {
     )
     names(NormalizedAxis_Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
     
-    NormalizedAxis_Melted_Rotated_Dispersion <- data.frame(
-      Melted_Rotated_Dispersion$X*sin(-Angle2*pi/180) + Melted_Rotated_Dispersion$Y*cos(-Angle2*pi/180),
-      Melted_Rotated_Dispersion$X*cos(-Angle2*pi/180) - Melted_Rotated_Dispersion$Y*sin(-Angle2*pi/180),
-      Melted_Rotated_Dispersion$CO2
+    NormalizedAxis_Melted_Shifted_Dispersion <- data.frame(
+      Melted_Shifted_Dispersion$X*sin(-Angle2*pi/180) + Melted_Shifted_Dispersion$Y*cos(-Angle2*pi/180),
+      Melted_Shifted_Dispersion$X*cos(-Angle2*pi/180) - Melted_Shifted_Dispersion$Y*sin(-Angle2*pi/180),
+      Melted_Shifted_Dispersion$CO2
     )
-    names(NormalizedAxis_Melted_Rotated_Dispersion) <- c("Y", "X", "CO2")
+    names(NormalizedAxis_Melted_Shifted_Dispersion) <- c("Y", "X", "CO2")
     
     STDAngle1 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Origin_Dispersion$Y, NormalizedAxis_Melted_Origin_Dispersion$X))
-    STDAngle2 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Rotated_Dispersion$Y, NormalizedAxis_Melted_Rotated_Dispersion$X))
+    STDAngle2 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Shifted_Dispersion$Y, NormalizedAxis_Melted_Shifted_Dispersion$X))
     
     STDAngleMeasure[i+1] <- abs(STDAngle1 - STDAngle2)
       
