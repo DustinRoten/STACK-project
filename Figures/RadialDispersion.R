@@ -25,7 +25,7 @@ COMMeasure = NULL
 AngleMeasure = NULL
 STDAngleMeasure = NULL
 
-for(i in 0:200) {
+for(i in 0:100) {
 
     Radial_Dispersion <- RadialDilation(Origin_Dispersion, i)
     
