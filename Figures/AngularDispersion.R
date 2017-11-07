@@ -25,9 +25,9 @@ COMMeasure = NULL
 AngleMeasure = NULL
 STDAngleMeasure = NULL
 
-for(i in 0:200) {
+for(i in 0:100) {
 
-    Angular_Dispersion <- AngularDilation(Origin_Dispersion, i)
+    Angular_Dispersion <- AngularStretch(Origin_Dispersion, i)
     
     Matrix_Origin_Dispersion <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, 0.1, 1)
     Matrix_Angular_Dispersion <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, 0.1, 2)
