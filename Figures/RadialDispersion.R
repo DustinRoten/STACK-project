@@ -88,7 +88,7 @@ for(i in 0:100) {
       
 }
 
-Metrics_Radial <- data.frame(c(0:200)/100 + 1, MRSMeasure, COMMeasure, AngleMeasure, STDAngleMeasure)
+Metrics_Radial <- data.frame(c(0:100)/100 + 1, MRSMeasure, COMMeasure, AngleMeasure, STDAngleMeasure)
 names(Metrics_Radial) <- c("ShiftDegree", "MRS_Measure", "COM_Measure", "MeanAngle_Measure", "STDAngle_Measure")
 
 #####################################
