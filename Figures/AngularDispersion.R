@@ -10,7 +10,6 @@ source("TEST-DEMOFunctions.R")
 # as well as the desired gridding resolution.
 PlantLAT <- 39.28682
 PlantLON <- -96.1172
-Resolution <- 0.1
 
 # Read in the file and translate the coordinates to the origin.
 # It has been renamed to a generic "x" variable since the same section
@@ -29,9 +28,9 @@ for(i in 0:100) {
 
     Angular_Dispersion <- AngularStretch(Origin_Dispersion, i)
     
-    Matrix_Origin_Dispersion <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, 0.1, 1)
-    Matrix_Angular_Dispersion <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, 0.1, 2)
-    Origin <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, 0.1, "O")
+    Matrix_Origin_Dispersion <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, Resolution, 1)
+    Matrix_Angular_Dispersion <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, Resolution, 2)
+    Origin <- GridDispersions2(Origin_Dispersion, Angular_Dispersion, Resolution, "O")
     
     Matrix_Angular_Dispersion <- Matrix_Angular_Dispersion*(sum(Matrix_Origin_Dispersion)/sum(Matrix_Angular_Dispersion))
     
@@ -58,7 +57,7 @@ for(i in 0:100) {
     x2 <- sum(Melted_Angular_Dispersion$X * Melted_Angular_Dispersion$CO2)/sum(Melted_Angular_Dispersion$CO2)
     y2 <- sum(Melted_Angular_Dispersion$Y * Melted_Angular_Dispersion$CO2)/sum(Melted_Angular_Dispersion$CO2)
     
-    COMMeasure[i+1] <- 111*0.1*sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    COMMeasure[i+1] <- 111*Resolution*sqrt((x2 - x1)^2 + (y2 - y1)^2)
     
     # Mean Angle Calculation
     Angle1 <- if( (180/pi)*atan2(y1, x1) < 0 ) {360 + (180/pi)*atan2(y1, x1)} else {(180/pi)*atan2(y1, x1)}
@@ -90,71 +89,3 @@ for(i in 0:100) {
 
 Metrics_Angular <- data.frame(c(0:100)/100 + 1, MRSMeasure, COMMeasure, AngleMeasure, STDAngleMeasure)
 names(Metrics_Angular) <- c("ShiftDegree", "MRS_Measure", "COM_Measure", "MeanAngle_Measure", "STDAngle_Measure")
-
-#####################################
-##### Plots are Generated Below #####
-#####################################
-
-### Plot 1: Angular Metric, MRS ###
-p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = MRS_Measure)) +
-  geom_line() +
-  xlab("Dilation Factor") +
-  ylab("") +
-  #ylim(0, max(max(1.01*ShiftedMetricValues$MetricValue), max(1.01*RotatedMetricValues$MetricValue), max(1.01*AngularMetricValues$MetricValue), max(1.01*AngularMetricValues$MetricValue) )) +
-  theme_bw() +
-  theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
-  theme(plot.title = element_text(size = 40, face = "bold")) +
-  theme(axis.text=element_text(size=40), axis.title=element_text(size=40,face="bold")) +
-  theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
-  theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
-
-ggsave("Angular-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
-
-
-### Plot 2: Angular Metric, MeanAngle ###
-p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = MeanAngle_Measure)) +
-  geom_line() +
-  xlab("Dilation Factor") +
-  ylab("") +
-  #ylim(0, max(max(1.01*ShiftedMetricValues$MeanAngleValue), max(1.01*RotatedMetricValues$MeanAngleValue), max(1.01*AngularMetricValues$MeanAngleValue), max(1.01*AngularMetricValues$MeanAngleValue) )) +
-  theme_bw() +
-  theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
-  theme(plot.title = element_text(size = 40, face = "bold")) +
-  theme(axis.text=element_text(size=40), axis.title=element_text(size=40,face="bold")) +
-  theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
-  theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
-
-ggsave("Angular-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
-
-
-### Plot 3: Angular Metric, STDAngle ###
-p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = STDAngle_Measure)) +
-  geom_line() +
-  xlab("Dilation Factor") +
-  ylab("") +
-  #ylim(0, max(max(1.01*ShiftedMetricValues$StdAngleValue), max(1.01*RotatedMetricValues$StdAngleValue), max(1.01*AngularMetricValues$StdAngleValue), max(1.01*AngularMetricValues$StdAngleValue) )) +
-  theme_bw() +
-  theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
-  theme(plot.title = element_text(size = 40, face = "bold")) +
-  theme(axis.text=element_text(size=40), axis.title=element_text(size=40,face="bold")) +
-  theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
-  theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
-
-ggsave("Angular-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
-
-
-### Plot 4: Angular Metric, COM ###
-p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = COM_Measure)) +
-  geom_line() +
-  xlab("Dilation Factor") +
-  ylab("") +
-  #ylim(0, max(max(1.01*ShiftedMetricValues$COM), max(1.01*RotatedMetricValues$COM), max(1.01*AngularMetricValues$COM), max(1.01*AngularMetricValues$COM) )) +
-  theme_bw() +
-  theme(strip.text.y = element_text(size = 30, colour = "black", face = "bold", angle = -90)) +
-  theme(plot.title = element_text(size = 40, face = "bold")) +
-  theme(axis.text=element_text(size=40), axis.title=element_text(size=40,face="bold")) +
-  theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
-  theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
-
-ggsave("Angular-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
-

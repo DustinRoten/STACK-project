@@ -10,7 +10,6 @@ source("TEST-DEMOFunctions.R")
 # as well as the desired gridding resolution.
 PlantLAT <- 39.28682
 PlantLON <- -96.1172
-Resolution <- 0.1
 
 # Read in the file and translate the coordinates to the origin.
 # It has been renamed to a generic "x" variable since the same section
@@ -29,9 +28,9 @@ for(i in 0:50) {
 
     Shifted_Dispersion <- ShiftDispersion(Origin_Dispersion, i)
     
-    Matrix_Origin_Dispersion <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, 0.1, 1)
-    Matrix_Shifted_Dispersion <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, 0.1, 2)
-    Origin <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, 0.1, "O")
+    Matrix_Origin_Dispersion <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, Resolution, 1)
+    Matrix_Shifted_Dispersion <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, Resolution, 2)
+    Origin <- GridDispersions2(Origin_Dispersion, Shifted_Dispersion, Resolution, "O")
     
     Matrix_Shifted_Dispersion <- Matrix_Shifted_Dispersion*(sum(Matrix_Origin_Dispersion)/sum(Matrix_Shifted_Dispersion))
     
@@ -58,7 +57,7 @@ for(i in 0:50) {
     x2 <- sum(Melted_Shifted_Dispersion$X * Melted_Shifted_Dispersion$CO2)/sum(Melted_Shifted_Dispersion$CO2)
     y2 <- sum(Melted_Shifted_Dispersion$Y * Melted_Shifted_Dispersion$CO2)/sum(Melted_Shifted_Dispersion$CO2)
     
-    COMMeasure[i+1] <- 111*0.1*sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    COMMeasure[i+1] <- 111*Resolution*sqrt((x2 - x1)^2 + (y2 - y1)^2)
     
     # Mean Angle Calculation
     Angle1 <- if( (180/pi)*atan2(y1, x1) < 0 ) {360 + (180/pi)*atan2(y1, x1)} else {(180/pi)*atan2(y1, x1)}

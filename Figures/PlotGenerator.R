@@ -4,6 +4,8 @@ source("ShiftDispersion.R")
 source("RadialDispersion.R")
 source("AngularDispersion.R")
 
+Resolution <- 0.01
+
 #####################################
 ##### Plots are Generated Below #####
 #####################################
@@ -21,7 +23,7 @@ p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = MRS_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Shift-MRS-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 2: Shift Metric, MeanAngle ###
@@ -37,7 +39,7 @@ p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = MeanAngle_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Shift-MeanAngle-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 3: Shift Metric, STDAngle ###
@@ -53,7 +55,7 @@ p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = STDAngle_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Shift-STDAngle-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 4: Shift Metric, COM ###
@@ -69,7 +71,7 @@ p <- ggplot(data = Metrics_Shift, aes(x = ShiftDegree, y = COM_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Shift-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Shift-COM-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 ######################################################################################
 
@@ -86,7 +88,7 @@ p <- ggplot(data = Metrics_Rotate, aes(x = ShiftDegree, y = MRS_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Rotate-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Rotate-MRS-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 2: Rotate Metric, MeanAngle ###
@@ -102,7 +104,7 @@ p <- ggplot(data = Metrics_Rotate, aes(x = ShiftDegree, y = MeanAngle_Measure)) 
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Rotate-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Rotate-MeanAngle-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 3: Rotate Metric, STDAngle ###
@@ -118,7 +120,7 @@ p <- ggplot(data = Metrics_Rotate, aes(x = ShiftDegree, y = STDAngle_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Rotate-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Rotate-STDAngle-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 4: Rotate Metric, COM ###
@@ -134,7 +136,7 @@ p <- ggplot(data = Metrics_Rotate, aes(x = ShiftDegree, y = COM_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Rotate-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Rotate-COM-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 #########################################################################################
 
@@ -152,7 +154,7 @@ p <- ggplot(data = Metrics_Radial, aes(x = ShiftDegree, y = MRS_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Radial-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Radial-MRS-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 2: Radial Metric, MeanAngle ###
@@ -169,7 +171,7 @@ p <- ggplot(data = Metrics_Radial, aes(x = ShiftDegree, y = MeanAngle_Measure)) 
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Radial-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Radial-MeanAngle-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 3: Radial Metric, STDAngle ###
@@ -186,7 +188,7 @@ p <- ggplot(data = Metrics_Radial, aes(x = ShiftDegree, y = STDAngle_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Radial-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Radial-STDAngle-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 4: Radial Metric, COM ###
@@ -203,7 +205,7 @@ p <- ggplot(data = Metrics_Radial, aes(x = ShiftDegree, y = COM_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Radial-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Radial-COM-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 ################################################################################################
 
@@ -221,7 +223,7 @@ p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = MRS_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Angular-MRS-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Angular-MRS-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 2: Angular Metric, MeanAngle ###
@@ -238,7 +240,7 @@ p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = MeanAngle_Measure))
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Angular-MeanAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Angular-MeanAngle-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 3: Angular Metric, STDAngle ###
@@ -255,7 +257,7 @@ p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = STDAngle_Measure)) 
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Angular-STDAngle-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Angular-STDAngle-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 ### Plot 4: Angular Metric, COM ###
@@ -272,27 +274,27 @@ p <- ggplot(data = Metrics_Angular, aes(x = ShiftDegree, y = COM_Measure)) +
   theme(axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 05))) +
   theme(plot.margin=unit(c(0.4,0.4,0.4,0.4),"cm"))
 
-ggsave("Angular-COM-Calibration.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
+ggsave("Angular-COM-Calibration01.jpg", p, device = "jpg", width = 10, height = 8, units = "in")
 
 
 
 ##### Moving files #####
-NAME <- c("Shift-COM-Calibration.jpg",
-          "Shift-MRS-Calibration.jpg",
-          "Shift-MeanAngle-Calibration.jpg",
-          "Shift-STDAngle-Calibration.jpg",
-          "Radial-COM-Calibration.jpg",
-          "Radial-MRS-Calibration.jpg",
-          "Radial-MeanAngle-Calibration.jpg",
-          "Radial-STDAngle-Calibration.jpg",
-          "Rotate-COM-Calibration.jpg",
-          "Rotate-MRS-Calibration.jpg",
-          "Rotate-MeanAngle-Calibration.jpg",
-          "Rotate-STDAngle-Calibration.jpg",
-          "Angular-COM-Calibration.jpg",
-          "Angular-MRS-Calibration.jpg",
-          "Angular-MeanAngle-Calibration.jpg",
-          "Angular-STDAngle-Calibration.jpg")
+NAME <- c("Shift-COM-Calibration01.jpg",
+          "Shift-MRS-Calibration01.jpg",
+          "Shift-MeanAngle-Calibration01.jpg",
+          "Shift-STDAngle-Calibration01.jpg",
+          "Radial-COM-Calibration01.jpg",
+          "Radial-MRS-Calibration01.jpg",
+          "Radial-MeanAngle-Calibration01.jpg",
+          "Radial-STDAngle-Calibration01.jpg",
+          "Rotate-COM-Calibration01.jpg",
+          "Rotate-MRS-Calibration01.jpg",
+          "Rotate-MeanAngle-Calibration01.jpg",
+          "Rotate-STDAngle-Calibration01.jpg",
+          "Angular-COM-Calibration01.jpg",
+          "Angular-MRS-Calibration01.jpg",
+          "Angular-MeanAngle-Calibration01.jpg",
+          "Angular-STDAngle-Calibration01.jpg")
 
 TEST = NULL
 for(i in 1:length(NAME)) {
