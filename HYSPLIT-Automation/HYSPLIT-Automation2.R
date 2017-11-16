@@ -1,0 +1,621 @@
+#-----------------------------------------------------------------------------------------------#
+# HYSPLIT-FullAutomation                                                                        #
+# Below is a first attempt at a full automation of a sensitivity analysis for any location(s).  #
+# Any year greater than 2000.                                                                   #
+#-----------------------------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------#
+# Immediately Run Script - User is prompted for all required inputs. #
+#--------------------------------------------------------------------#
+
+# Load appropriate functions
+source("../Figures/TEST-DEMOFunctions.R")
+
+# Ask user for the year of interest, number of locations to be considered and the information at each location.
+if( interactive() ) {
+  
+    NAMpath <- readline(prompt = "This script uses NAM - 12km data. Include the NAM directory here - ")  
+  
+    StartYear <- as.numeric(readline(prompt = "Input Year (YYYY > 2000) - "))
+  
+    NumberOfLocations <- as.numeric(readline(prompt = "Enter the number of emissions sources - "))
+  
+    # initialize an empty dataframe
+    LocationInformation <- data.frame()
+  
+    for(i in 1:NumberOfLocations) {
+    
+        LocationInformation[i, 1] <- readline(paste(prompt = "Provide a three letter title for location", i, "-", " ", sep = " "))
+        LocationInformation[i, 2] <- as.numeric(readline(paste(prompt = "What is the total eGRID emission value for", LocationInformation[i,1], "in kilograms ?", " ", sep = " ")))
+        LocationInformation[i, 3] <- as.numeric(readline(paste(prompt = "How many exhaust points are there at location", LocationInformation[i,1], "?", " ", sep = " ")))
+        LocationInformation[i, 4] <- as.numeric(readline(paste(prompt = "What is the eGRID latitude value for", LocationInformation[i,1],"?", " ", sep = " ")))
+        LocationInformation[i, 5] <- as.numeric(readline(paste(prompt = "What is the eGRID longitude value for", LocationInformation[i,1],"?", " ", sep = " ")))
+    
+    }
+  
+    names(LocationInformation) <- c("Name", "eGRID_Emissions", "Exhaust_Points", "eGRID_Lat", "eGRID_Lon")
+  
+    for(i in 1:nrow(LocationInformation)) {
+    
+        StackParams <- data.frame()
+    
+            for(j in 1:LocationInformation[i, 3]) {
+      
+                Latitude <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                    "Please provide the stack latitude (deg) - ", sep = "")))
+      
+                Longitude <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                    "Please provide the stack longitude (deg) - ", sep = "")))
+      
+                Height <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                  "Please provide the stack height (m) - ", sep = "")))
+      
+                EmisRate <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                    "Please provide the stack emission rate (kg/hr) - ", sep = "")))
+      
+                Area <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                "Please provide the stack area (m^2) - ", sep = "")))
+      
+                Heat <- as.numeric(readline(paste(prompt = "Information is needed for stack", " ", j, " ", "at plant", " ", LocationInformation[i, 1], ". ", "\n",
+                                                "Please provide the net stack heat (W) - ", sep = "")))
+      
+                temp <- c(Latitude, Longitude, Height, EmisRate, Area, Heat)
+      
+                StackParams <- rbind(StackParams, temp)
+            }
+    
+        names(StackParams) <- c("Latitude", "Longitude", "Height", "EmisRate", "Area", "Heat")
+    
+        assign(noquote(paste(LocationInformation[i, 1], "_StackParams", sep = "")), StackParams)
+    
+    }
+  
+  
+  
+    Pollutant <- readline(prompt = "Enter pollutant name (XXXX) - ")
+  
+    ParticleDiameter <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                       "Please provide the particle diameter (um) - ", sep = ""))
+  
+    ParticleDensity <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                      "Please provide the particle density (g/cc) - ", sep = ""))
+  
+    ParticleDepoVelocity <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                           "Please provide the deposition velocity (m/s) - ", sep = ""))
+  
+    ParticleMolecularWeight <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                              "Please provide the particle molecular weight (g) - ", sep = ""))
+  
+    ParticleARatio <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                     "Please provide the particle A-Ratio - ", sep = ""))
+  
+    ParticleDRatio <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                     "Please provide the particle D-Ratio - ", sep = ""))
+  
+    ParticleHenry <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                    "Please provide the 'Henry' - ", sep = ""))
+  
+    ParticleHenryConstant <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                            "Please provide the value for Henry's Constant (M/a) - ", sep = ""))
+  
+    ParticleInCloud <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                      "Please provide the In-cloud value (l/l) - ", sep = ""))
+  
+    ParticleBelowCloud <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                         "Please provide the Below-Cloud value (1/s) - ", sep = ""))
+  
+    ParticleRadioactive <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                          "Please provide the particle halflife (days) - ", sep = ""))
+  
+    ParticleResuspensionFactor <- readline(paste(prompt = "Information is needed about the particle species ", Pollutant, ". ", "\n",
+                                                 "Please provide the pollutant resuspension factor (1/m) - ", sep = ""))
+  
+    Resolution <- as.numeric(readline(paste(prompt = "Please provie a resolution (in degrees) for this analysis - ")))
+  
+  
+    # Insert a parameter checking method here!
+  
+}
+
+# User information completed. The following organizes the pollutant's parameters
+ChemicalParameters1 <- as.numeric(c(ParticleDiameter, ParticleDensity, 1))
+ChemicalParameters2 <- as.numeric(c(ParticleDepoVelocity, ParticleMolecularWeight, ParticleARatio, ParticleDRatio, ParticleHenry))
+ChemicalParameters3 <- as.numeric(c(ParticleHenryConstant, ParticleInCloud, ParticleBelowCloud))
+ChemicalParameters4 <- as.numeric(ParticleRadioactive)
+ChemicalParameters5 <- as.numeric(ParticleResuspensionFactor)
+
+
+# Constructing the time management dataframe
+MonthNames <- c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+DaysInMonth <- c(31, if (StartYear %% 4 == 0) {29} else{28}, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+MonthData <- data.frame(MonthNames, DaysInMonth)
+
+
+# Constructing a vector of meteorology file names (NAM-12km)
+MeteorologyFileNames <- NULL
+c <- 1
+for(a in 1:12) {
+  
+    for(b in 1:MonthData[a,2]) {
+    
+        MeteorologyFileNames[c] <- paste(StartYear, if(a <= 9) {"0"} else {}, a, if(b <= 9) {"0"} else {}, b, "_nam12", sep = "")
+        c <- c + 1
+        
+    }
+}
+
+##### Run from here if parameters are already entered #####
+
+# Check that all 3 required files are present
+##if(file.exists("SETUP.CFG") & file.exists("EMITIMES") & file.exists("CONTROL") != TRUE) {
+##    print("SETUP, EMITIMES, or CONTROL file missing")
+##    stopifnot(file.exists("SETUP.CFG") & file.exists("EMITIMES") & file.exists("CONTROL"))
+##} else {}
+#
+
+# Do work in the SystemFiles directory
+setwd("SystemFiles")
+
+
+# LOOP MODEL TYPE (A-F)
+ModelType <- c("A", "B", "C", "D", "E", "F")
+
+# A- eGRID Model
+# B- 0m Stack Height
+# C- 0m Stack Diameter
+# D- 0W Net Heat (Om/s Exit Velocity)
+# E- "Full" Model
+# F- Modified eGRID Model (with EMITIMES file)
+
+
+### Constructing the CONTROL file for HYSPLIT ###
+
+# Model type to be used
+for(z in 1:6) {     # Begins the "Model Type" loop
+  
+    ModType <- ModelType[z]
+    
+    # The *_StackParams file will be needed for each point source.
+    for(i in 1:nrow(LocationInformation)) {     # Starts specific "Stack Information" for each location
+      
+      eval(parse(text = paste("StackInfo", "<- ", LocationInformation[i,1], "_StackParams", sep = "")))
+      
+      # This will generate the parent data frame that will be continuously appended. Each point source and model type will receive it's own file. XXX_X.
+      
+      ParentFileName <- paste(LocationInformation[i,1], "_", ModType, sep = "")
+      ColumnNames <- c("DA", "HR", "LAT", "LON", paste(Pollutant))
+      ParentDataFrame <- as.data.frame(setNames(replicate(6, numeric(0), simplify = FALSE), ColumnNames))
+      
+      eval(parse(text = paste(write.table(ParentDataFrame, ParentFileName, row.names = FALSE, col.names = TRUE))))
+    
+      for(q in 1:12) {     # Starts the loop for each month
+        
+          for(m in 1:MonthData[q,2]) {     # Starts the loop for each day of the month
+          
+              cat(
+            
+                  paste(StartYear - 2000, q, m, 00, collapse = " "),"\n",
+                  if(ModType == "A") {1} else {LocationInformation[i,3]}, "\n",
+            
+                  sep = "", file = "CONTROL"
+            
+              )
+
+              # This break in the CONTROL file is where multiple stacks (if applicaple) get added.
+              # This is achieved by appending the portion of the CONTROL file generated from the above code.
+          
+              if(ModType == "A") {
+            
+                  line <- paste(LocationInformation[i,4], LocationInformation[i,5])
+                  write(line, file = "CONTROL", append = TRUE)
+            
+                  if(file.exists("SETUP.CFG") == TRUE) {file.rename("SETUP.CFG", "NO_SETUP.CFG")} else {}
+              
+              } else if(ModType == "B") {
+            
+                  if(file.exists("NO_SETUP.CFG") == TRUE) {file.rename("NO_SETUP.CFG", "SETUP.CFG")} else {}
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StackInfo[j,1], StackInfo[j,2], 0, StackInfo[j,4], StackInfo[j,5], StackInfo[j,6], sep = " ")
+                      write(line, file = "CONTROL", append = TRUE)
+              
+                  }
+            
+              } else if(ModType == "C") {
+            
+                  if(file.exists("NO_SETUP.CFG") == TRUE) {file.rename("NO_SETUP.CFG", "SETUP.CFG")} else {}
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StackInfo[j,1], StackInfo[j,2], StackInfo[j,3], StackInfo[j,4], 0, StackInfo[j,6], sep = " ")
+                      write(line, file = "CONTROL", append = TRUE)
+              
+                  }
+            
+              } else if(ModType == "D") {
+            
+                  if(file.exists("NO_SETUP.CFG") == TRUE) {file.rename("NO_SETUP.CFG", "SETUP.CFG")} else {}
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StackInfo[j,1], StackInfo[j,2], StackInfo[j,3], StackInfo[j,4], StackInfo[j,5], 0, sep = " ")
+                      write(line, file = "CONTROL", append = TRUE)
+              
+                  }
+            
+              } else if(ModType == "E") {
+            
+                  if(file.exists("NO_SETUP.CFG") == TRUE) {file.rename("NO_SETUP.CFG", "SETUP.CFG")} else {}
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StackInfo[j,1], StackInfo[j,2], StackInfo[j,3], StackInfo[j,4], StackInfo[j,5], StackInfo[j,6], sep = " ")
+                      write(line, file = "CONTROL", append = TRUE)
+              
+                }
+            
+              } else if(ModType == "F") {
+            
+                  if(file.exists("NO_SETUP.CFG") == TRUE) {file.rename("NO_SETUP.CFG", "SETUP.CFG")} else {}
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StackInfo[j,1], StackInfo[j,2], 0, StackInfo[j,4], 0, 0, sep = " ")
+                      write(line, file = "CONTROL", append = TRUE)
+              
+                  }
+            
+              }     # This closes StackInfo
+          
+          
+          # The remaining parameters of the CONTROL file are added here by appending the portion of the CONTROL file generated above.
+          
+          y <- m + sum(MonthData[1:q-1, 2])     # The value of y selects the meteorology file to be used.
+          
+          cat(
+            
+              24, "\n",     # Total run time (hrs)
+              0, "\n",      # Method of vertical motion
+              20000, "\n",  # Top of the model (m)
+              3, "\n",      # Number of NAM12km files loaded in
+            
+              paste(NAMpath), "\n",
+              paste(if(q == 1 & m == 1) {paste(StartYear-1, "1231_nam12", sep = "")} else {MeteorologyFileNames[y-1]}), "\n",
+            
+              paste(NAMpath), "\n",
+              paste(MeteorologyFileNames[y]), "\n",
+            
+              paste(NAMpath), "\n",
+              paste(if(q == 12 & m == 31) {paste(StartYear+1, "0101_nam12", sep = "")} else {MeteorologyFileNames[y+1]}), "\n",
+            
+              1, "\n",      # Number of pollutants
+              Pollutant, "\n",
+              (LocationInformation[i,2]/sum(MonthData[,2]))/24, "\n",    # This is an hourly rate
+              24, "\n",
+              paste(StartYear - 2000, q, m, 0, 0, collapse = " "), "\n",
+              1, "\n",      # Number of grids = number of pollutants
+              paste(round(mean(StackInfo[,1]), 5), round(mean(StackInfo[,2]), 5), collapse = " "), "\n",
+              paste( c(0.05, 0.05), collapse = " "), "\n",     # Resolution of the grid (lat, lon)
+              paste( c(80.0, 80.0), collapse = " "), "\n",     # Size of the display grid (lat, lon)
+              "./", "\n",    # Save the files here
+              paste(LocationInformation[i,1], "-", ModType, "-", StartYear - 2000, "-", q, "-", m, sep = ""), "\n",    # This is the individual file name
+              1, "\n",
+              20000, "\n", # Vertical levels, top of model
+              paste(StartYear - 2000, q, m, 0, 0, collapse = " "), "\n",
+            
+              # This conditionals adjusts the model stop date at the end of each month
+              paste(        
+              
+              (if(q == 12 & m == MonthData[12,2]) {temp <- as.numeric((StartYear + 1)) - 2000} else {StartYear - 2000}),
+              
+              (if(m <= (MonthData[q,2]-1)) {q}
+               else if(m == MonthData[q,2] & q != 12) {q+1}
+               else if(q == 12 & m == MonthData[12,2]) {1}),
+              
+              (if (m <= (MonthData[q,2]-1)) {m+1} else {1}),
+              00, 00, collapse = " "), "\n",
+              # END stop date management
+            
+              paste( c(00, 24, 00), collapse = " "), "\n",     # Analysis method - averaging
+              1, "\n",      # Number of particles for deposition
+              paste(ChemicalParameters1, collapse = " "), "\n",
+              paste(ChemicalParameters2, collapse = " "), "\n",
+              paste(ChemicalParameters3, collapse = " "), "\n",
+              paste(ChemicalParameters4, collapse = " "), "\n",
+              paste(ChemicalParameters5, collapse = " "), "\n",
+            
+              sep = "", file = "CONTROL", append = TRUE
+            
+          )
+          
+          # EMITIMES file begins here
+          if(ModType != "A") {
+          
+              cat(
+              
+                  paste("YYYY MM DD HH   DURATION(hhhh) #RECORDS", sep = ""),"\n",
+                  paste("YYYY MM DD HH MM DURATION(hhmm) LAT LON HGT(m) RATE(/h) AREA(m2) HEAT(w)"), "\n",
+                  paste(StartYear, q, m, 0, 9999, LocationInformation[i,3], collapse = " "), "\n",
+                  sep = "", file = "EMITIMES"
+              
+              )
+          
+              if(ModType == "B") {
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StartYear, q, m, 0, 0, 2400, StackInfo[j,1], StackInfo[j,2], 0, StackInfo[j,4], StackInfo[j,5], StackInfo[j,6], sep = " ")
+                      write(line, file = "EMITIMES", append = TRUE)
+              
+                  }
+            
+              } else if(ModType == "C") {
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StartYear, q, m, 0, 0, 2400, StackInfo[j,1], StackInfo[j,2], StackInfo[j,3], StackInfo[j,4], 0, StackInfo[j,6], sep = " ")
+                      write(line, file = "EMITIMES", append = TRUE)
+              
+                  }
+            
+              } else if(ModType == "D") {
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StartYear, q, m, 0, 0, 2400, StackInfo[j,1], StackInfo[j,2], StackInfo[j,3], StackInfo[j,4], StackInfo[j,5], 0, sep = " ")
+                      write(line, file = "EMITIMES", append = TRUE)
+              
+                  }
+            
+              } else if(ModType == "E") {
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StartYear, q, m, 0, 0, 2400, StackInfo[j,1], StackInfo[j,2], StackInfo[j,3], StackInfo[j,4], StackInfo[j,5], StackInfo[j,6], sep = " ")
+                      write(line, file = "EMITIMES", append = TRUE)
+              
+                  }
+            
+              } else if(ModType == "F") {
+            
+                  for(j in 1:LocationInformation[i,3]) {
+              
+                      line <- paste(StartYear, q, m, 0, 0, 2400, StackInfo[j,1], StackInfo[j,2], 0, StackInfo[j,4], 0, 0, sep = " ")
+                      write(line, file = "EMITIMES", append = TRUE)
+              
+                  }
+            
+              }
+            
+          } # This closes the conditional EMITIMES file generation
+
+          # Run the HYSPLIT model to produce a binary file output. Convert this to an ASCII file to be used for the analysis.
+          system2("./hycs_std")
+          system2("./con2asc", paste(LocationInformation[i,1], "-", ModType, "-", StartYear - 2000, "-", q, "-", m, sep = ""))
+          
+          # The con2asc appends each output ASCII file with an unwanted delimiter in the file name. That is fixed here.
+          # The original binary file is also overwritten.
+          file.rename(list.files(pattern = "_00", full.names = TRUE), paste(LocationInformation[i,1], "-", ModType, "-", StartYear - 2000, "-", q, "-", m, sep = ""))
+          
+          # The single ASCII file is then appended to the large file.
+          # 'temp' is a temporary object that reads in the ASCII file
+          CurrentCSV <- read.csv(paste(LocationInformation[i,1], "-", ModType, "-", StartYear - 2000, "-", q, "-", m, sep = ""), header = TRUE, sep = "")
+          names(CurrentCSV) <- ColumnNames
+          write.table(CurrentCSV, ParentFileName, append = TRUE, row.names = FALSE, col.names = FALSE)
+          
+          # The single ASCII file is then deleted in order to save space.
+          file.remove(paste(LocationInformation[i,1], "-", ModType, "-", StartYear - 2000, "-", q, "-", m, sep = ""))
+          
+        }     # Closes the day
+      }     # Closes the Mont
+    }     # Closes LocationInformation
+}     # Closes ModelType
+
+library(geosphere)
+library(ggplot2)
+library(reshape2)
+
+##### The section that follows is the MRS measure #####
+for(d in 1:nrow(LocationInformation)) {
+  
+    # Model2 is reserved by default for the "E" scenario (All parameters included)
+    Model2 <- as.data.frame(read.table(paste(LocationInformation[d,1], "_", "E", sep = ""), header = TRUE, sep = "")[1:5])
+    Model2$DA <- Model2$DA - 1
+    Model2$DA[Model2$DA == 0] <- (c-1)
+  
+    # The loop below steps through each of the other models and compares them to "E"
+    for(e in 1:length(ModelType)) {
+        
+        if(ModelType[e] != "E") {
+        
+            Model1 <- read.table(paste(LocationInformation[d,1], "_", ModelType[e], sep = ""), header = TRUE, sep = "")[1:5]
+            Model1$DA <- Model1$DA - 1
+            Model1$DA[Model1$DA == 0] <- (c-1)
+            
+            Metrics <- data.frame()
+            
+            MRSMeasure = NULL
+            COMMeasure = NULL
+            AngleMeasure = NULL
+            STDAngleMeasure = NULL
+            
+            for(f in 1:(c-1) ) {     # Here, the model is incremented for each day and all metrics are used (day variable: "f")
+              
+                DayModel1 <- subset(Model1, DA == f)
+                DayModel2 <- subset(Model2, DA == f)
+                
+                # SHIFT TO ORIGIN HERE
+                
+                Matrix_Model2_Dispersion <- GridDispersions2(DayModel2, DayModel1, Resolution, 1)
+                Matrix_Model1_Dispersion <- GridDispersions2(DayModel2, DayModel1, Resolution, 2)
+                Origin <- GridDispersions2(DayModel2, DayModel1, Resolution, "O")
+                
+                Matrix_Model1_Dispersion <- Matrix_Model1_Dispersion*(sum(Matrix_Model2_Dispersion)/sum(Matrix_Model1_Dispersion))
+                
+                MRSMeasure[i+1] <- (1/(2*sum(Matrix_Model2_Dispersion)))*sum(abs(Matrix_Model2_Dispersion - Matrix_Model1_Dispersion))*100
+                
+                # "Spatial" Matrices
+                Melted_Origin_Dispersion <- melt(Matrix_Origin_Dispersion)
+                Melted_Angular_Dispersion <- melt(Matrix_Angular_Dispersion)
+                
+                Melted_Origin_Dispersion <- subset(Melted_Origin_Dispersion, Melted_Origin_Dispersion$value != 0)
+                Melted_Angular_Dispersion <- subset(Melted_Angular_Dispersion, Melted_Angular_Dispersion$value != 0)
+                
+                Melted_Origin_Dispersion$X1 <- Melted_Origin_Dispersion$X1 - round(mean(StackInfo[,1]), 5)
+                Melted_Origin_Dispersion$X2 <- Melted_Origin_Dispersion$X2 - round(mean(StackInfo[,2]), 5)
+                Melted_Angular_Dispersion$X1 <- Melted_Angular_Dispersion$X1 - round(mean(StackInfo[,1]), 5)
+                Melted_Angular_Dispersion$X2 <- Melted_Angular_Dispersion$X2 - round(mean(StackInfo[,2]), 5)
+                
+                names(Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
+                names(Melted_Angular_Dispersion) <- c("Y", "X", "CO2")
+                
+                # Center of Mass Calculation
+                x1 <- sum(Melted_Origin_Dispersion$X * Melted_Origin_Dispersion$CO2)/sum(Melted_Origin_Dispersion$CO2)
+                y1 <- sum(Melted_Origin_Dispersion$Y * Melted_Origin_Dispersion$CO2)/sum(Melted_Origin_Dispersion$CO2)
+                x2 <- sum(Melted_Angular_Dispersion$X * Melted_Angular_Dispersion$CO2)/sum(Melted_Angular_Dispersion$CO2)
+                y2 <- sum(Melted_Angular_Dispersion$Y * Melted_Angular_Dispersion$CO2)/sum(Melted_Angular_Dispersion$CO2)
+                
+                COMMeasure[i+1] <- 111*Resolution*sqrt((x2 - x1)^2 + (y2 - y1)^2)
+                
+                # Mean Angle Calculation
+                Angle1 <- if( (180/pi)*atan2(y1, x1) < 0 ) {360 + (180/pi)*atan2(y1, x1)} else {(180/pi)*atan2(y1, x1)}
+                Angle2 <- if( (180/pi)*atan2(y2, x2) < 0 ) {360 + (180/pi)*atan2(y2, x2)} else {(180/pi)*atan2(y2, x2)}
+                
+                AngleMeasure[i+1] <- if(abs(Angle1 - Angle2) > 180) {360 - abs(Angle1 - Angle2)} else {abs(Angle1 - Angle2)}
+                
+                # Standard Deviation Calculation
+                NormalizedAxis_Melted_Origin_Dispersion <- data.frame(
+                  Melted_Origin_Dispersion$X*sin(-Angle1*pi/180) + Melted_Origin_Dispersion$Y*cos(-Angle1*pi/180),
+                  Melted_Origin_Dispersion$X*cos(-Angle1*pi/180) - Melted_Origin_Dispersion$Y*sin(-Angle1*pi/180),
+                  Melted_Origin_Dispersion$CO2
+                )
+                names(NormalizedAxis_Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
+                
+                NormalizedAxis_Melted_Angular_Dispersion <- data.frame(
+                  Melted_Angular_Dispersion$X*sin(-Angle2*pi/180) + Melted_Angular_Dispersion$Y*cos(-Angle2*pi/180),
+                  Melted_Angular_Dispersion$X*cos(-Angle2*pi/180) - Melted_Angular_Dispersion$Y*sin(-Angle2*pi/180),
+                  Melted_Angular_Dispersion$CO2
+                )
+                names(NormalizedAxis_Melted_Angular_Dispersion) <- c("Y", "X", "CO2")
+                
+                STDAngle1 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Origin_Dispersion$Y, NormalizedAxis_Melted_Origin_Dispersion$X))
+                STDAngle2 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Angular_Dispersion$Y, NormalizedAxis_Melted_Angular_Dispersion$X))
+                
+                STDAngleMeasure[i+1] <- abs(STDAngle1 - STDAngle2)
+                
+            }     # Closes the daily loop
+          
+            # Write output file here
+            Metics <- data.frame(c(1:c-1), MRSMeasure, AngleMeasure, STDAngleMeasure, COMMeasure)
+            names(Metrics) <- c("Day", "MRS", "MeanAngle", "VarAngle", "CenterOfMass")
+            write.csv(Metrics, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, "_", Resolution, sep = ""))
+            
+        } else {}     # Closes the conditional != "E" statement
+    }    # Closes each model 
+}    # Closes each location
+
+
+##### The cleaning process begins here #####
+
+
+dir.create(paste("../HYSPLIT-Results-", StartYear, sep = ""))
+
+for(s in 1:length(ModelType)) {
+    
+    file.copy(paste("Results", ModelType[s], ".jpg", sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
+    file.remove(paste("Results", ModelType[s], ".jpg", sep = ""))
+  
+    for(u in 1:nrow(LocationInformation)) {
+      
+        file.copy(paste(LocationInformation[u,1], "_", ModelType[s], sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
+        file.remove(paste(LocationInformation[u,1], "_", ModelType[s], sep = ""))
+        
+        file.copy(paste(LocationInformation[u,1], "_", ModelType[s], "_", StartYear, "_", Resolution, sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
+        file.remove(paste(LocationInformation[u,1], "_", ModelType[s], "_", StartYear, "_", Resolution, sep = ""))
+          
+    }
+  
+}
+
+
+print("disregard warnings above") 
+setwd(paste("../HYSPLIT-Results-", StartYear, sep = ""))
+
+
+#Plotting Script added at the end
+library(reshape2)
+library(ggplot2)
+
+for (y in 1:length(ModelType)) {
+  
+  if (ModelType[y] != "E") {
+    
+    CombinedMRS <- NULL
+    CombinedMeanAngle <- NULL
+    CombinedVarAngle <- NULL
+    CombinedCOM <- NULL
+    
+    for (x in 1:nrow(LocationInformation)) {
+      
+      ToBeCombined <- read.csv(paste(LocationInformation[x,1], "_", ModelType[y], "_", StartYear, "_", Resolution, sep = ""))
+      
+      CombinedMRS <- as.data.frame(cbind(CombinedMRS, ToBeCombined$MRS))
+      names(CombinedMRS)[x] <- paste(LocationInformation[x,1])
+      
+      CombinedMeanAngle <- as.data.frame(cbind(CombinedMeanAngle, ToBeCombined$MeanAngle))
+      names(CombinedMeanAngle)[x] <- paste(LocationInformation[x,1])
+      
+      CombinedVarAngle <- as.data.frame(cbind(CombinedVarAngle, ToBeCombined$VarAngle))
+      names(CombinedVarAngle)[x] <- paste(LocationInformation[x,1])
+      
+      CombinedCOM <- as.data.frame(cbind(CombinedCOM, ToBeCombined$CenterOfMass))
+      names(CombinedCOM)[x] <- paste(LocationInformation[x,1])
+      
+    }
+    
+    write.csv(CombinedMRS, paste("CombinedMRS", "_", StartYear, "_", ModelType[y], sep = ""))
+    write.csv(CombinedMeanAngle, paste("CombinedMean", "_", StartYear, "_", ModelType[y], sep = ""))
+    write.csv(CombinedVarAngle, paste("CombinedVar", "_", StartYear, "_", ModelType[y], sep = ""))
+    write.csv(CombinedCOM, paste("CombinedCOM", "_", StartYear, "_", ModelType[y], sep = ""))
+    
+  } else {}
+  
+}
+
+
+ModelStatements <- c("All Parameters", "Stack Height", "Stack Diameter", "Exit Velocity", "ERROR!", "All Parameters (Forced 0's)")
+CombinedFileNames <- c("MRS", "Mean", "Var", "COM")
+#Metric Units?
+
+
+for (j in 1:length(CombinedFileNames)) {
+  
+  for (i in 1:length(ModelType)) {
+    
+    if (ModelType[i] != "E") {
+      
+      ToBePlotted <- read.csv(paste("Combined", CombinedFileNames[j], "_", StartYear, "_", ModelType[i], sep = ""))
+      names(ToBePlotted)[1] <- "Day"
+      
+      ToBePlotted <- melt(ToBePlotted, id.vars = "Day", variable.name = "series")
+      
+      SavePlot <- ggplot(data = ToBePlotted, aes(x = Day, y = value)) +
+        geom_line() +
+        ylim(0, max(ToBePlotted$value) + 1) +
+        ylab("Metric (%)") +
+        facet_grid(series ~ .) +
+        ggtitle(paste("Sensitivity to ", ModelStatements[i], " ", "(", Resolution, " ", "Degree Resolution", ")", sep = "")) +
+        theme_bw() +
+        theme(strip.text.y = element_text(size = 20, colour = "black", face = "bold", angle = -90)) +
+        theme(plot.title = element_text(size = 30, face = "bold")) +
+        theme(axis.text=element_text(size=15), axis.title=element_text(size=25,face="bold"))
+      
+      ggsave(paste("Results", ModelType[i], "_", CombinedFileNames[j], ".jpg", sep = ""), plot = SavePlot, scale = 1, width = 14, height = 8)
+      
+    } else {}
+  }
+}
+
+
+
