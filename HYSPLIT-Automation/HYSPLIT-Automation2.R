@@ -440,10 +440,14 @@ for(d in 1:nrow(LocationInformation)) {
             AngleMeasure = NULL
             STDAngleMeasure = NULL
             
+            # METRICS START HERE!
             for(f in 1:(c-1) ) {     # Here, the model is incremented for each day and all metrics are used (day variable: "f")
               
-                DayModel1 <- subset(Model1, DA == f)
-                DayModel2 <- subset(Model2, DA == f)
+                temp1 <- subset(Model1, DA == f)
+                temp2 <- subset(Model2, DA == f)
+              
+                DayModel1 <- ShiftToOrigin("S", temp1, round(mean(StackInfo[,1]), 5), round(mean(StackInfo[,2]), 5))
+                DayModel2 <- ShiftToOrigin("S", temp2, round(mean(StackInfo[,1]), 5), round(mean(StackInfo[,2]), 5))
                 
                 # SHIFT TO ORIGIN HERE
                 
@@ -462,10 +466,10 @@ for(d in 1:nrow(LocationInformation)) {
                 Melted_Origin_Dispersion <- subset(Melted_Origin_Dispersion, Melted_Origin_Dispersion$value != 0)
                 Melted_Angular_Dispersion <- subset(Melted_Angular_Dispersion, Melted_Angular_Dispersion$value != 0)
                 
-                Melted_Origin_Dispersion$X1 <- Melted_Origin_Dispersion$X1 - round(mean(StackInfo[,1]), 5)
-                Melted_Origin_Dispersion$X2 <- Melted_Origin_Dispersion$X2 - round(mean(StackInfo[,2]), 5)
-                Melted_Angular_Dispersion$X1 <- Melted_Angular_Dispersion$X1 - round(mean(StackInfo[,1]), 5)
-                Melted_Angular_Dispersion$X2 <- Melted_Angular_Dispersion$X2 - round(mean(StackInfo[,2]), 5)
+                Melted_Origin_Dispersion$X1 <- Melted_Origin_Dispersion$X1 - Origin[1]
+                Melted_Origin_Dispersion$X2 <- Melted_Origin_Dispersion$X2 - Origin[2]
+                Melted_Angular_Dispersion$X1 <- Melted_Angular_Dispersion$X1 - Origin[1]
+                Melted_Angular_Dispersion$X2 <- Melted_Angular_Dispersion$X2 - Origin[2]
                 
                 names(Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
                 names(Melted_Angular_Dispersion) <- c("Y", "X", "CO2")
