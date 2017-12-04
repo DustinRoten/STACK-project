@@ -4,7 +4,7 @@ source("ShiftDispersion.R")
 source("RadialDispersion.R")
 source("AngularDispersion.R")
 
-Resolution <- 0.01
+Resolution <- 0.15
 
 #####################################
 ##### Plots are Generated Below #####
