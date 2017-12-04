@@ -439,6 +439,7 @@ for(d in 1:nrow(LocationInformation)) {
             COMMeasure = NULL
             AngleMeasure = NULL
             STDAngleMeasure = NULL
+            Origin = NULL
             
             # METRICS START HERE!
             for(f in 1:(c-1) ) {     # Here, the model is incremented for each day and all metrics are used (day variable: "f")
@@ -446,72 +447,79 @@ for(d in 1:nrow(LocationInformation)) {
                 temp1 <- subset(Model1, DA == f)
                 temp2 <- subset(Model2, DA == f)
               
-                DayModel1 <- ShiftToOrigin("S", temp1, round(mean(StackInfo[,1]), 5), round(mean(StackInfo[,2]), 5))
-                DayModel2 <- ShiftToOrigin("S", temp2, round(mean(StackInfo[,1]), 5), round(mean(StackInfo[,2]), 5))
+                DayModel1 <- ShiftToOrigin("S", temp1, round(mean(LocationInformation[d,4]), 5), round(mean(LocationInformation[d,5]), 5))
+                DayModel2 <- ShiftToOrigin("S", temp2, round(mean(LocationInformation[d,4]), 5), round(mean(LocationInformation[d,5]), 5))
                 
                 # SHIFT TO ORIGIN HERE
                 
                 Matrix_Model2_Dispersion <- GridDispersions2(DayModel2, DayModel1, Resolution, 1)
                 Matrix_Model1_Dispersion <- GridDispersions2(DayModel2, DayModel1, Resolution, 2)
-                Origin <- GridDispersions2(DayModel2, DayModel1, Resolution, "O")
+                Origin <- LocateOrigin(DayModel2, DayModel1, Resolution, Day = f)
                 
-                Matrix_Model1_Dispersion <- Matrix_Model1_Dispersion*(sum(Matrix_Model2_Dispersion)/sum(Matrix_Model1_Dispersion))
+                print(Origin)
                 
-                MRSMeasure[i+1] <- (1/(2*sum(Matrix_Model2_Dispersion)))*sum(abs(Matrix_Model2_Dispersion - Matrix_Model1_Dispersion))*100
+                MRSMeasure[f] <- (1/(2*sum(Matrix_Model2_Dispersion)))*sum(abs(Matrix_Model2_Dispersion - Matrix_Model1_Dispersion))*100
+                
+                if(MRSMeasure[f] > 100) {
+                  
+                  print(paste("Error", "MRSMeasure =", MRSMeasure[f], sep = " "))
+                  break
+                  
+                } else {}
                 
                 # "Spatial" Matrices
-                Melted_Origin_Dispersion <- melt(Matrix_Origin_Dispersion)
-                Melted_Angular_Dispersion <- melt(Matrix_Angular_Dispersion)
+                Melted_Model2_Dispersion <- melt(Matrix_Model2_Dispersion)
+                Melted_Model1_Dispersion <- melt(Matrix_Model1_Dispersion)
                 
-                Melted_Origin_Dispersion <- subset(Melted_Origin_Dispersion, Melted_Origin_Dispersion$value != 0)
-                Melted_Angular_Dispersion <- subset(Melted_Angular_Dispersion, Melted_Angular_Dispersion$value != 0)
+                Melted_Model2_Dispersion <- subset(Melted_Model2_Dispersion, Melted_Model2_Dispersion$value != 0)
+                Melted_Model1_Dispersion <- subset(Melted_Model1_Dispersion, Melted_Model1_Dispersion$value != 0)
                 
-                Melted_Origin_Dispersion$X1 <- Melted_Origin_Dispersion$X1 - Origin[1]
-                Melted_Origin_Dispersion$X2 <- Melted_Origin_Dispersion$X2 - Origin[2]
-                Melted_Angular_Dispersion$X1 <- Melted_Angular_Dispersion$X1 - Origin[1]
-                Melted_Angular_Dispersion$X2 <- Melted_Angular_Dispersion$X2 - Origin[2]
+                Melted_Model2_Dispersion$Var1 <- Melted_Model2_Dispersion$Var1 - Origin[1]
+                Melted_Model2_Dispersion$Var2 <- Melted_Model2_Dispersion$Var2 - Origin[2]
+                Melted_Model1_Dispersion$Var1 <- Melted_Model1_Dispersion$Var1 - Origin[1]
+                Melted_Model1_Dispersion$Var2 <- Melted_Model1_Dispersion$Var2 - Origin[2]
                 
-                names(Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
-                names(Melted_Angular_Dispersion) <- c("Y", "X", "CO2")
+                names(Melted_Model2_Dispersion) <- c("Y", "X", "CO2")
+                names(Melted_Model1_Dispersion) <- c("Y", "X", "CO2")
                 
                 # Center of Mass Calculation
-                x1 <- sum(Melted_Origin_Dispersion$X * Melted_Origin_Dispersion$CO2)/sum(Melted_Origin_Dispersion$CO2)
-                y1 <- sum(Melted_Origin_Dispersion$Y * Melted_Origin_Dispersion$CO2)/sum(Melted_Origin_Dispersion$CO2)
-                x2 <- sum(Melted_Angular_Dispersion$X * Melted_Angular_Dispersion$CO2)/sum(Melted_Angular_Dispersion$CO2)
-                y2 <- sum(Melted_Angular_Dispersion$Y * Melted_Angular_Dispersion$CO2)/sum(Melted_Angular_Dispersion$CO2)
+                x1 <- sum(Melted_Model2_Dispersion$X * Melted_Model2_Dispersion$CO2)/sum(Melted_Model2_Dispersion$CO2)
+                y1 <- sum(Melted_Model2_Dispersion$Y * Melted_Model2_Dispersion$CO2)/sum(Melted_Model2_Dispersion$CO2)
+                x2 <- sum(Melted_Model1_Dispersion$X * Melted_Model1_Dispersion$CO2)/sum(Melted_Model1_Dispersion$CO2)
+                y2 <- sum(Melted_Model1_Dispersion$Y * Melted_Model1_Dispersion$CO2)/sum(Melted_Model1_Dispersion$CO2)
                 
-                COMMeasure[i+1] <- 111*Resolution*sqrt((x2 - x1)^2 + (y2 - y1)^2)
+                COMMeasure[f] <- 111*Resolution*sqrt((x2 - x1)^2 + (y2 - y1)^2)
                 
                 # Mean Angle Calculation
                 Angle1 <- if( (180/pi)*atan2(y1, x1) < 0 ) {360 + (180/pi)*atan2(y1, x1)} else {(180/pi)*atan2(y1, x1)}
                 Angle2 <- if( (180/pi)*atan2(y2, x2) < 0 ) {360 + (180/pi)*atan2(y2, x2)} else {(180/pi)*atan2(y2, x2)}
                 
-                AngleMeasure[i+1] <- if(abs(Angle1 - Angle2) > 180) {360 - abs(Angle1 - Angle2)} else {abs(Angle1 - Angle2)}
+                AngleMeasure[f] <- if(abs(Angle1 - Angle2) > 180) {360 - abs(Angle1 - Angle2)} else {abs(Angle1 - Angle2)}
                 
                 # Standard Deviation Calculation
-                NormalizedAxis_Melted_Origin_Dispersion <- data.frame(
-                  Melted_Origin_Dispersion$X*sin(-Angle1*pi/180) + Melted_Origin_Dispersion$Y*cos(-Angle1*pi/180),
-                  Melted_Origin_Dispersion$X*cos(-Angle1*pi/180) - Melted_Origin_Dispersion$Y*sin(-Angle1*pi/180),
-                  Melted_Origin_Dispersion$CO2
+                NormalizedAxis_Melted_Model2_Dispersion <- data.frame(
+                  Melted_Model2_Dispersion$X*sin(-Angle1*pi/180) + Melted_Model2_Dispersion$Y*cos(-Angle1*pi/180),
+                  Melted_Model2_Dispersion$X*cos(-Angle1*pi/180) - Melted_Model2_Dispersion$Y*sin(-Angle1*pi/180),
+                  Melted_Model2_Dispersion$CO2
                 )
-                names(NormalizedAxis_Melted_Origin_Dispersion) <- c("Y", "X", "CO2")
+                names(NormalizedAxis_Melted_Model2_Dispersion) <- c("Y", "X", "CO2")
                 
-                NormalizedAxis_Melted_Angular_Dispersion <- data.frame(
-                  Melted_Angular_Dispersion$X*sin(-Angle2*pi/180) + Melted_Angular_Dispersion$Y*cos(-Angle2*pi/180),
-                  Melted_Angular_Dispersion$X*cos(-Angle2*pi/180) - Melted_Angular_Dispersion$Y*sin(-Angle2*pi/180),
-                  Melted_Angular_Dispersion$CO2
+                NormalizedAxis_Melted_Model1_Dispersion <- data.frame(
+                  Melted_Model1_Dispersion$X*sin(-Angle2*pi/180) + Melted_Model1_Dispersion$Y*cos(-Angle2*pi/180),
+                  Melted_Model1_Dispersion$X*cos(-Angle2*pi/180) - Melted_Model1_Dispersion$Y*sin(-Angle2*pi/180),
+                  Melted_Model1_Dispersion$CO2
                 )
-                names(NormalizedAxis_Melted_Angular_Dispersion) <- c("Y", "X", "CO2")
+                names(NormalizedAxis_Melted_Model1_Dispersion) <- c("Y", "X", "CO2")
                 
-                STDAngle1 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Origin_Dispersion$Y, NormalizedAxis_Melted_Origin_Dispersion$X))
-                STDAngle2 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Angular_Dispersion$Y, NormalizedAxis_Melted_Angular_Dispersion$X))
+                STDAngle1 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Model2_Dispersion$Y, NormalizedAxis_Melted_Model2_Dispersion$X))
+                STDAngle2 <- sd((180/pi)*atan2(NormalizedAxis_Melted_Model1_Dispersion$Y, NormalizedAxis_Melted_Model1_Dispersion$X))
                 
-                STDAngleMeasure[i+1] <- abs(STDAngle1 - STDAngle2)
+                STDAngleMeasure[f] <- abs(STDAngle1 - STDAngle2)
                 
             }     # Closes the daily loop
           
             # Write output file here
-            Metics <- data.frame(c(1:c-1), MRSMeasure, AngleMeasure, STDAngleMeasure, COMMeasure)
+            Metrics <- data.frame(c(1:(c-1)), MRSMeasure, AngleMeasure, STDAngleMeasure, COMMeasure)
             names(Metrics) <- c("Day", "MRS", "MeanAngle", "VarAngle", "CenterOfMass")
             write.csv(Metrics, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, "_", Resolution, sep = ""))
             
@@ -620,6 +628,4 @@ for (j in 1:length(CombinedFileNames)) {
     } else {}
   }
 }
-
-
 
