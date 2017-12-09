@@ -559,7 +559,7 @@ setwd(paste("../HYSPLIT-Results-", StartYear, sep = ""))
 library(reshape2)
 library(ggplot2)
 
-for (y in 1:length(ModelType)) {
+for (y in 1:length(ModelType)-1) {
   
   if (ModelType[y] != "E") {
     
