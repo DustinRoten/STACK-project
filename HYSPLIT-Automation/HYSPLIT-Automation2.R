@@ -8,6 +8,9 @@
 # Immediately Run Script - User is prompted for all required inputs. #
 #--------------------------------------------------------------------#
 
+# TEMPORARY!
+ModelType <- c("A", "E") # Un-comment line 163
+
 # Load appropriate functions
 source("../Figures/TEST-DEMOFunctions.R")
 
@@ -158,7 +161,7 @@ setwd("SystemFiles")
 
 
 # LOOP MODEL TYPE (A-F)
-ModelType <- c("A", "B", "C", "D", "E", "F")
+#ModelType <- c("A", "B", "C", "D", "E", "F")
 
 # A- eGRID Model
 # B- 0m Stack Height
@@ -171,7 +174,7 @@ ModelType <- c("A", "B", "C", "D", "E", "F")
 ### Constructing the CONTROL file for HYSPLIT ###
 
 # Model type to be used
-for(z in 1:6) {     # Begins the "Model Type" loop
+for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
   
     ModType <- ModelType[z]
     
