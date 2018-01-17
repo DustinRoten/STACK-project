@@ -615,8 +615,6 @@ for (j in 1:length(CombinedFileNames)) {
         theme(plot.title = element_text(size = 30, face = "bold")) +
         theme(axis.text=element_text(size=15), axis.title=element_text(size=25,face="bold"))
       
-      ggsave(paste("Results", ModelType[i], "_", CombinedFileNames[j], ".jpg", sep = ""), plot = SavePlot, scale = 1, width = 14, height = 8)
-      
     } else {}
   }
 }
