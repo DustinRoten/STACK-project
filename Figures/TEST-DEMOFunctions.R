@@ -366,24 +366,13 @@ GridDispersions2 <- function(x, y, Resolution, z) {
     
           for(h in 1:x_steps) {
       
-          CellAveragedPollutant_1 <- mean(x[,7][x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
+          CellAveragedPollutant_1 <- mean(x$CO2[x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
                                                 x$LAT >= minLAT + Resolution*(g-1) & x$LAT < minLAT + Resolution*g])
       
-          CellAveragedPollutant_2 <- mean(y[,7][y$LON >= minLON + Resolution*(h-1) & y$LON < minLON + Resolution*h &
+          CellAveragedPollutant_2 <- mean(y$CO2[y$LON >= minLON + Resolution*(h-1) & y$LON < minLON + Resolution*h &
                                                 y$LAT >= minLAT + Resolution*(g-1) & y$LAT < minLAT + Resolution*g])
           
-          OriginCheck <- subset(x, x$LON >= minLON + Resolution*(h-1) & x$LON < minLON + Resolution*h &
-                                  x$LAT >= minLAT + Resolution*(g-1) & x$LAT < minLAT + Resolution*g)
           
-          if(dim(OriginCheck)[1] != 0) {
-            
-              if(min(abs(OriginCheck$LAT)) == min(abs(x$LAT)) & min(abs(OriginCheck$LON)) == min(abs(x$LON))) {
-                
-                  Origin <- c(g,h)
-                  
-              } else {}
-            
-          } else {}
       
           Model1_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_1), 0, CellAveragedPollutant_1)
           Model2_Matrix[g,h] <- ifelse(is.nan(CellAveragedPollutant_2), 0, CellAveragedPollutant_2)
@@ -393,6 +382,49 @@ GridDispersions2 <- function(x, y, Resolution, z) {
   
     if (z == 1) {return(Model1_Matrix)}
     else if (z == 2) {return(Model2_Matrix)}
-    else if (z == "O") {return(Origin <- Origin)}
     
+}
+
+
+
+LocateOrigin <- function(x, y, Resolution, Day) {
+  
+  tempx <- rbind(x, c(Day, 0, 0, 0, 0))
+  
+  x_range <- max( max(tempx$LON), max(y$LON) ) - min( min(tempx$LON), min(y$LON) ) + 1
+  y_range <- max( max(tempx$LAT), max(y$LAT) ) - min( min(tempx$LAT), min(y$LAT) ) + 1
+  
+  # Translate the area into the number of grid cells based on the Resolution required.
+  x_steps <- round(x_range/Resolution, 0)
+  y_steps <- round(y_range/Resolution, 0)
+  
+  # Set up 2 matrices to store values in
+  Model1_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
+  Model2_Matrix <- matrix(0, nrow = y_steps, ncol = x_steps)
+  
+  # These values are going to be used in interations to define the bounds of each grid cell
+  minLON <- min(min(tempx$LON), min(y$LON))
+  minLAT <- min(min(tempx$LAT), min(y$LAT))
+  
+  for (g in 1:y_steps) {
+    
+    for(h in 1:x_steps) {
+      
+      OriginCheck <- subset(tempx, tempx$LON >= minLON + Resolution*(h-1) & tempx$LON < minLON + Resolution*h &
+                              tempx$LAT >= minLAT + Resolution*(g-1) & tempx$LAT < minLAT + Resolution*g)
+      
+      if(dim(OriginCheck)[1] != 0) {
+
+        if(min(abs(OriginCheck$LAT)) == 0 & min(abs(OriginCheck$LON)) == 0) {
+         
+          Origin <- c(g,h)
+          
+        } else {}
+        
+      } else {}
+    }
+  }
+  
+  return(Origin)
+  
 }
