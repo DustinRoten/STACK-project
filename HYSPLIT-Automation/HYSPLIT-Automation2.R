@@ -8,8 +8,14 @@
 # Immediately Run Script - User is prompted for all required inputs. #
 #--------------------------------------------------------------------#
 
+# Load necessary functions
+library(geosphere)
+library(ggplot2)
+library(reshape2)
+library(mailR)
+
 # Load appropriate functions
-source("../Figures/TEST-DEMOFunctions.R")
+source("./SystemFiles/Custom_R_Functions.R")
 
 # Ask user for the year of interest, number of locations to be considered and the information at each location.
 if( interactive() ) {
@@ -412,9 +418,6 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
     }     # Closes LocationInformation
 }     # Closes ModelType
 
-library(geosphere)
-library(ggplot2)
-library(reshape2)
 
 ##### The section that follows is the MRS measure #####
 for(d in 1:nrow(LocationInformation)) {
