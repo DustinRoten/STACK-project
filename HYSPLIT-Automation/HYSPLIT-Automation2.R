@@ -459,14 +459,11 @@ for(d in 1:nrow(LocationInformation)) {
                 Matrix_Model1_Dispersion <- GridDispersions2(DayModel2, DayModel1, Resolution, 2)
                 Origin <- LocateOrigin(DayModel2, DayModel1, Resolution, Day = f)
                 
-                print(Origin)
-                
                 MRSMeasure[f] <- (1/(2*sum(Matrix_Model2_Dispersion)))*sum(abs(Matrix_Model2_Dispersion - Matrix_Model1_Dispersion))*100
                 
                 if(MRSMeasure[f] > 100) {
                   
                   print(paste("Error", "MRSMeasure =", MRSMeasure[f], sep = " "))
-                  break
                   
                 } else {}
                 
