@@ -414,7 +414,7 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
           file.remove(paste(LocationInformation[i,1], "-", ModType, "-", StartYear - 2000, "-", q, "-", m, sep = ""))
           
         }     # Closes the day
-      }     # Closes the Mont
+      }     # Closes the Month
     }     # Closes LocationInformation
 }     # Closes ModelType
 
