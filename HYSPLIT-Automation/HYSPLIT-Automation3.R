@@ -37,6 +37,7 @@ if(PreviousRun == "Y" | PreviousRun == "y" | PreviousRun == "Yes" | PreviousRun 
     
     if(file.exists(VariablePath)) {
         print(paste("Using", VariablePath, sep = " "))
+        load(VariablePath)
     } else {
         print("File does not exist. Exiting script now.")
         break
@@ -150,8 +151,6 @@ if(PreviousRun == "Y" | PreviousRun == "y" | PreviousRun == "Yes" | PreviousRun 
 }
 
 # If a previous object file exists, the script will start from here.
-load(VariablePath)
-
 # User information completed. The following organizes the pollutant's parameters
 ChemicalParameters1 <- as.numeric(c(ParticleDiameter, ParticleDensity, 1))
 ChemicalParameters2 <- as.numeric(c(ParticleDepoVelocity, ParticleMolecularWeight, ParticleARatio, ParticleDRatio, ParticleHenry))
