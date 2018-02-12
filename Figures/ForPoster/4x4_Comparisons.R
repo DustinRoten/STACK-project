@@ -2,11 +2,11 @@ library(ggmap)
 library(ggplot2)
 library(gridExtra)
 
-f = 150
+f = 244
 zoomval <-6 #0623 - 7 ... 0210 - 6
 
-#Model1 <- read.delim("JEC_A", header = TRUE, sep = "")
-#Model2 <- read.delim("JEC_E", header = TRUE, sep = "")
+Model1 <- read.delim("TCG_C", header = TRUE, sep = "")
+Model2 <- read.delim("TCG_E", header = TRUE, sep = "")
 
 if(min(Model1$DA) != 0 & min(Model2$DA) != 0) {
 
@@ -18,8 +18,8 @@ if(min(Model1$DA) != 0 & min(Model2$DA) != 0) {
 Plume1 <- subset(Model1, DA == f)
 Plume2 <- subset(Model2, DA == f)
   
-PlantLAT <- 39.2865
-PlantLON <- -96.1172
+PlantLAT <- 46.75513
+PlantLON <- -122.8581
 
 map <- get_map(location = c(PlantLON, PlantLAT), zoom = zoomval, maptype = "terrain", color = "bw")
 

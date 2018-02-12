@@ -146,7 +146,7 @@ if(PreviousRun == "Y" | PreviousRun == "y" | PreviousRun == "Yes" | PreviousRun 
     
     }
   
-    save.image(file = paste("HYSPLIT_Vars_", Sys.Date(), sep = ""), version = NULL, ascii = FALSE)
+    save.image(file = paste("HYSPLIT_Vars_", Sys.Date(), ".RData", sep = ""), version = NULL, ascii = FALSE)
   
 }
 
@@ -450,14 +450,12 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
 
 
 ##### The metrics follow here #####
-
-
-# Model2 is reserved by default for the "E" scenario (All parameters included)
-Model2 <- as.data.frame(read.table(paste(LocationInformation[d,1], "_", "E", sep = ""), header = TRUE, sep = "")[1:5])
-Model2$DA <- Model2$DA - 1
-Model2$DA[Model2$DA == 0] <- (c-1)
-
 for(d in 1:nrow(LocationInformation)) {
+  
+  # Model2 is reserved by default for the "E" scenario (All parameters included)
+  Model2 <- as.data.frame(read.table(paste(LocationInformation[d,1], "_", "E", sep = ""), header = TRUE, sep = "")[1:5])
+  Model2$DA <- Model2$DA - 1
+  Model2$DA[Model2$DA == 0] <- (c-1)
   
   # The loop below steps through each of the other models and compares them to "E"
   for(e in 1:length(ModelType)) {
@@ -556,12 +554,37 @@ for(d in 1:nrow(LocationInformation)) {
       write.csv(Metrics, paste(LocationInformation[d,1], "_", ModelType[e], "_", StartYear, "_", Resolution, sep = ""))
       
     } else {}     # Closes the conditional != "E" statement
+    
+    if(Alerts == TRUE) {
+      write.table(Sys.time(), file = paste("Analysis_", LocationInformation[d,1], "_", ModelType[e], ".tsv", sep = ""), col.names = FALSE, row.names = FALSE)
+      file.rename(from = paste("Analysis_", LocationInformation[d,1], "_", ModelType[e], ".tsv", sep = ""),
+                  to = paste("~/Google Drive/RAutomation/Analysis_", LocationInformation[d,1], "_", ModelType[e], ".tsv", sep = ""))
+    } else{}
+    
   }    # Closes each model
-  
-  if(Alerts == TRUE) {
-    write.table(Sys.time(), file = paste("Analysis_", LocationInformation[i,1], "_", ModType, ".tsv", sep = ""), col.names = FALSE, row.names = FALSE)
-    file.rename(from = paste("Analysis_", LocationInformation[i,1], "_", ModType, ".tsv", sep = ""),
-                to = paste("~/Google Drive/RAutomation/Analysis_", LocationInformation[i,1], "_", ModType, ".tsv", sep = ""))
-  } else{}
-  
 }    # Closes each location
+
+
+##### The cleaning process begins here #####
+dir.create(paste("../HYSPLIT-Results-", StartYear, sep = ""))
+
+for(s in 1:length(ModelType)) {
+  
+  file.copy(paste("Results", ModelType[s], ".jpg", sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
+  file.remove(paste("Results", ModelType[s], ".jpg", sep = ""))
+  
+  for(u in 1:nrow(LocationInformation)) {
+    
+    file.copy(paste(LocationInformation[u,1], "_", ModelType[s], sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
+    file.remove(paste(LocationInformation[u,1], "_", ModelType[s], sep = ""))
+    
+    file.copy(paste(LocationInformation[u,1], "_", ModelType[s], "_", StartYear, "_", Resolution, sep = ""), paste("../HYSPLIT-Results-", StartYear, sep = ""))
+    file.remove(paste(LocationInformation[u,1], "_", ModelType[s], "_", StartYear, "_", Resolution, sep = ""))
+    
+  }
+  
+}
+
+
+print("disregard warnings above") 
+setwd(paste("../HYSPLIT-Results-", StartYear, sep = ""))
