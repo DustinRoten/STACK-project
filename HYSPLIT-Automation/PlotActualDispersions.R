@@ -2,11 +2,14 @@ library(ggmap)
 library(ggplot2)
 library(gridExtra)
 
-f = 5
-zoomval <-6 #0623 - 7 ... 0210 - 6
+f = 294
+zoomval <-5 #0623 - 7 ... 0210 - 6
 
-Model1 <- read.delim("TCG_A", header = TRUE, sep = "")
-Model2 <- read.delim("TCG_E", header = TRUE, sep = "")
+Model1 <- read.delim("JEC_F.txt", header = TRUE, sep = "")
+Model2 <- read.delim("JEC_E.txt", header = TRUE, sep = "")
+
+PlantLAT <- 39.2865
+PlantLON <- -96.1172
 
 if(min(Model1$DA) != 0 & min(Model2$DA) != 0) {
 
@@ -17,9 +20,6 @@ if(min(Model1$DA) != 0 & min(Model2$DA) != 0) {
 
 Plume1 <- subset(Model1, DA == f)
 Plume2 <- subset(Model2, DA == f)
-  
-PlantLAT <- 39.2865
-PlantLON <- -96.1172
 
 map <- get_map(location = c(PlantLON, PlantLAT), zoom = zoomval, maptype = "terrain", color = "bw")
 
@@ -172,4 +172,4 @@ Plot4
 Plot3Max <- Plot3
 Plot4Max <- Plot4
 
-grid.arrange(Plot1Max, Plot2Max, Plot3Max, Plot4Max, ncol = 2)
+#grid.arrange(Plot1Max, Plot2Max, Plot3Max, Plot4Max, ncol = 2)

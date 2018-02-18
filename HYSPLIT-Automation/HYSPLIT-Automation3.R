@@ -588,3 +588,4 @@ for(s in 1:length(ModelType)) {
 
 print("disregard warnings above") 
 setwd(paste("../HYSPLIT-Results-", StartYear, sep = ""))
+if(Alerts == TRUE) {do.call(file.remove, list(list.files("~/Google Drive/RAutomation/", full.names = TRUE)))} else {}
