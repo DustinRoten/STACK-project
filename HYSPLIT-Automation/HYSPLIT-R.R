@@ -64,8 +64,8 @@ if(PreviousRun == "Y" | PreviousRun == "y" | PreviousRun == "Yes" | PreviousRun 
       LocationInformation[i,4] <- as.numeric(readline(paste(prompt = "What is the eGRID latitude value for", LocationInformation[i,1],"?", " ", sep = " ")))
       LocationInformation[i,5] <- as.numeric(readline(paste(prompt = "What is the eGRID longitude value for", LocationInformation[i,1],"?", " ", sep = " ")))
       LocationInformation[i,6] <- as.numeric(readline(paste(prompt = "What is the intended stack height for", LocationInformation[i,1], "?", " ", sep = " ")))
-      LocationInformation[i,7] <- as.numeric(readline(paste(prompt = "What is the intended stack diameter for", LocationInformation[i,1], "?", " ", sep = " ")))
-      LocationInformation[i,8] <- as.numeric(readline(paste(prompt = "What is the intended exhaust velocity for", LocationInformation[i,1], "?", " ", sep = " ")))
+      LocationInformation[i,7] <- as.numeric(readline(paste(prompt = "What is the intended release area (m^2) for", LocationInformation[i,1], "?", " ", sep = " ")))
+      LocationInformation[i,8] <- as.numeric(readline(paste(prompt = "What is the intended exhaust heat (Watts) for", LocationInformation[i,1], "?", " ", sep = " ")))
       
       
     }
