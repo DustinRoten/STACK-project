@@ -226,7 +226,7 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
         cat(
           
           paste(StartYear - 2000, q, m, 00, collapse = " "),"\n",
-          if(ModType == "A") {1} else {LocationInformation[i,3]}, "\n",
+          if(ModType != "E") {1} else {LocationInformation[i,3]}, "\n",
           
           sep = "", file = "CONTROL"
           
@@ -237,7 +237,7 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
         
         if(ModType == "A") {
           
-            line <- paste(LocationInformation[i,4], LocationInformation[i,5])
+            line <- paste(LocationInformation[i,4], LocationInformation[i,5], 0)
             write(line, file = "CONTROL", append = TRUE)
           
             if(file.exists("SETUP.CFG") == TRUE) {file.rename("SETUP.CFG", "NO_SETUP.CFG")} else {}
@@ -342,7 +342,7 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
         )
         
         # EMITIMES file begins here
-        if(ModType != "A" & ModType != "E") {
+        if(ModType != "A") {
           
           cat(
             
@@ -472,7 +472,11 @@ for(d in 1:nrow(LocationInformation)) {
         
         if(MRSMeasure[f] > 100) {
           
-          print(paste("Error", "MRSMeasure =", MRSMeasure[f], sep = " "))
+          message <- paste("Error", "MRSMeasure =", MRSMeasure[f], "\n",
+                           "Location:", " ", LocationInformation[d,1], "\n",
+                           "Day:", " ", f, "\n", sep = " ")
+          write(message, file = "ERROR_MESSAGES.txt", append = TRUE)
+          file.copy("ERROR_MESSAGES.txt", "~/Google Drive/RAutomation/ERROR_MESSAGES.txt", overwrite = TRUE)
           
         } else {}
         
