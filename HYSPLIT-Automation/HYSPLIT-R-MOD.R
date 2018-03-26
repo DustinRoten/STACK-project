@@ -1,7 +1,7 @@
 # -----------------------------------
 # HYSPLIT - Marland Analysis (3)
 # Year > 2000
-# Dustin Roten - Jan. 2018
+# Dustin Roten - Mar. 2018
 # -----------------------------------
 
 SystemType <- Sys.info()[1]
@@ -187,6 +187,7 @@ for(a in 1:12) {
 
 # Do work in the SystemFiles directory
 setwd("SystemFiles")
+dir.create("Archive")
 
 
 # LOOP MODEL TYPE (A-F)
@@ -332,6 +333,12 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
           
         )
         
+        # Moves CONTROL file into Archive
+        file.copy("CONTROL",
+                  paste("./Archive/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_CONTROL", sep = ""),
+                  overwrite = TRUE
+                  )
+        
         # EMITIMES file begins here
         if(ModType == "A") {
           
@@ -403,10 +410,15 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
               
             }
             
-          }
-          
-         # This closes the conditional EMITIMES file generation
+          } # This closes the conditional EMITIMES file generation
         
+        # Move EMITIMES file to Archive folder
+        file.copy("EMITIMES",
+                  paste("./Archive/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_EMITIMES", sep = ""),
+                  overwrite = TRUE
+        )
+        
+    
         # Run the HYSPLIT model to produce a binary file output. Convert this to an ASCII file to be used for the analysis.
         if(SystemType == "Windows") {
           system2("./hycs_std.exe")
@@ -414,6 +426,20 @@ for(z in 1:length(ModelType)) {     # Begins the "Model Type" loop
         } else {
           system2("./hycs_std")
           system2("./con2asc", paste(LocationInformation[i,1], "-", ModType, "-", StartYear - 2000, "-", q, "-", m, sep = ""))
+          
+          file.copy("MESSAGE",
+                    paste("./Archive/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_MESSAGE", sep = ""),
+                    overwrite = TRUE
+          )
+          
+          if(file.exists("WARNING") == TRUE) {
+          
+              file.copy("WARNING",
+                    paste("./Archive/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_WARNING", sep = ""),
+                    overwrite = TRUE
+              )
+          } else {}
+          
         }
         
         # The con2asc appends each output ASCII file with an unwanted delimiter in the file name. That is fixed here.
@@ -486,11 +512,36 @@ for(d in 1:nrow(LocationInformation)) {
         
         if(MRSMeasure[f] > 100) {
           
-          message <- paste("Error", "MRSMeasure =", MRSMeasure[f], "\n",
-                           "Location:", " ", LocationInformation[d,1], "\n",
-                           "Day:", " ", f, "\n", sep = " ")
-          write(message, file = "ERROR_MESSAGES.txt", append = TRUE)
-          file.copy("ERROR_MESSAGES.txt", "~/Google Drive/RAutomation/ERROR_MESSAGES.txt", overwrite = TRUE)
+            message <- paste("Error", "MRSMeasure =", MRSMeasure[f], "\n",
+                             "Location:", " ", LocationInformation[d,1], "\n",
+                             "Day:", " ", f, "\n", sep = " ")
+            write(message, file = "ERROR_MESSAGES.txt", append = TRUE)
+            file.copy("ERROR_MESSAGES.txt", "~/Google Drive/RAutomation/ERROR_MESSAGES.txt", overwrite = TRUE)
+          
+            file.copy(paste("./Archive/",  LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_CONTROL", sep = ""),
+                      paste("~/Google Drive/RAutomation/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_CONTROL", sep = ""),
+                      overwrite = TRUE
+            )
+          
+            file.copy(paste("./Archive/",  LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_EMITIMES", sep = ""),
+                      paste("~/Google Drive/RAutomation/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_EMITIMES", sep = ""),
+                      overwrite = TRUE
+            )
+            
+            file.copy(paste("./Archive/",  LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_MESSAGE", sep = ""),
+                      paste("~/Google Drive/RAutomation/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_MESSAGE", sep = ""),
+                      overwrite = TRUE
+            )
+            
+            if(file.exists("WARNING") == TRUE) {
+              
+              file.copy(paste("./Archive/",  LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_WARNING", sep = ""),
+                        paste("~/Google Drive/RAutomation/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_WARNING", sep = ""),
+                        overwrite = TRUE
+              )
+              
+            } else {}
+          
           
         } else {}
         
@@ -585,4 +636,3 @@ for(s in 1:length(ModelType)) {
 
 print("disregard warnings above") 
 setwd(paste("../HYSPLIT-Results-", StartYear, sep = ""))
-if(Alerts == TRUE) {do.call(file.remove, list(list.files("~/Google Drive/RAutomation/", full.names = TRUE)))} else {}
