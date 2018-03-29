@@ -512,35 +512,40 @@ for(d in 1:nrow(LocationInformation)) {
         
         if(MRSMeasure[f] > 100) {
           
+            flag <- 0
+            for(Month in 1:12) {
+                if((sum(DaysInMonth[1:Month]) - f) > 0 && flag == 0) {
+                      print(Month)
+                      MON <- Month
+                      DAY <- f-sum(DaysInMonth[1:(Month-1)])
+                      flag <- 1
+            } else {}
+          }
+          
             message <- paste("Error", "MRSMeasure =", MRSMeasure[f], "\n",
                              "Location:", " ", LocationInformation[d,1], "\n",
                              "Day:", " ", f, "\n", sep = " ")
             write(message, file = "ERROR_MESSAGES.txt", append = TRUE)
             file.copy("ERROR_MESSAGES.txt", "~/Google Drive/RAutomation/ERROR_MESSAGES.txt", overwrite = TRUE)
           
-            file.copy(paste("./Archive/",  LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_CONTROL", sep = ""),
-                      paste("~/Google Drive/RAutomation/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_CONTROL", sep = ""),
+            file.copy(paste("./Archive/",  LocationInformation[d,1], "_", ModelType[e], "_", MON, "_", DAY, "_", StartYear, "_CONTROL", sep = ""),
+                      paste("~/Google Drive/RAutomation/", LocationInformation[d,1], "_", ModelType[e], "_", MON, "_", DAY, "_", StartYear, "_CONTROL", sep = ""),
                       overwrite = TRUE
             )
           
-            file.copy(paste("./Archive/",  LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_EMITIMES", sep = ""),
-                      paste("~/Google Drive/RAutomation/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_EMITIMES", sep = ""),
+            file.copy(paste("./Archive/",  LocationInformation[d,1], "_", ModelType[e], "_", MON, "_", DAY, "_", StartYear, "_EMITIMES", sep = ""),
+                      paste("~/Google Drive/RAutomation/", LocationInformation[d,1], "_", ModelType[e], "_", MON, "_", DAY, "_", StartYear, "_EMITIMES", sep = ""),
                       overwrite = TRUE
             )
             
-            file.copy(paste("./Archive/",  LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_MESSAGE", sep = ""),
-                      paste("~/Google Drive/RAutomation/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_MESSAGE", sep = ""),
+            file.copy(paste("./Archive/",  LocationInformation[d,1], "_", ModelType[e], "_", MON, "_", DAY, "_", StartYear, "_MESSAGE", sep = ""),
+                      paste("~/Google Drive/RAutomation/", LocationInformation[d,1], "_", ModelType[e], "_", MON, "_", DAY, "_", StartYear, "_MESSAGE", sep = ""),
                       overwrite = TRUE
             )
-            
-            if(file.exists("WARNING") == TRUE) {
               
-              file.copy(paste("./Archive/",  LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_WARNING", sep = ""),
-                        paste("~/Google Drive/RAutomation/", LocationInformation[i,1], "_", ModType, "_", q, "_", m, "_", StartYear, "_WARNING", sep = ""),
-                        overwrite = TRUE
-              )
-              
-            } else {}
+            file.copy(paste("./Archive/",  LocationInformation[d,1], "_", ModelType[e], "_", MON, "_", DAY, "_", StartYear, "_WARNING", sep = ""),
+                      paste("~/Google Drive/RAutomation/", LocationInformation[d,1], "_", ModelType[e], "_", MON, "_", DAY, "_", StartYear, "_WARNING", sep = ""),
+                      overwrite = TRUE)
           
           
         } else {}
