@@ -2,14 +2,15 @@ library(ggmap)
 library(ggplot2)
 library(gridExtra)
 
-f = 67
+f = 40
 zoomval <-5 #0623 - 7 ... 0210 - 6
+zoomval2 <- 8
 
-Model1 <- read.delim("TCG_A", header = TRUE, sep = "")
-Model2 <- read.delim("TCG_D", header = TRUE, sep = "")
+Model1 <- read.delim("JEC_A", header = TRUE, sep = "")
+Model2 <- read.delim("JEC_D", header = TRUE, sep = "")
 
-PlantLAT <- 46.7559
-PlantLON <- -122.8598
+PlantLAT <- 39.2865
+PlantLON <- -96.1172
 
 if(min(Model1$DA) != 0 & min(Model2$DA) != 0) {
 
@@ -99,7 +100,7 @@ Plot1Max <- Plot1
 Plot2Max <- Plot2
 
 ################################################# Zoom View ########################
-zoomval <- 8
+zoomval <- zoomval2
 map <- get_map(location = c(PlantLON, PlantLAT), zoom = zoomval, maptype = "terrain", color = "bw")
 
 Plot3 <- ggmap(map) +
@@ -170,4 +171,4 @@ Plot4 <- ggmap(map) +
 Plot3Max <- Plot3
 Plot4Max <- Plot4
 
-#grid.arrange(Plot1Max, Plot2Max, Plot3Max, Plot4Max, ncol = 2)
+grid.arrange(Plot1Max, Plot2Max, Plot3Max, Plot4Max, ncol = 2)
